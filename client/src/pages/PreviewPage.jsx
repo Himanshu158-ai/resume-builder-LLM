@@ -3,101 +3,6 @@ import { useRef, useState } from "react";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas-pro";
 
-//fake resume
-const fakeResume = {
-  personalInfo: {
-    name: "Himanshu Singh",
-    email: "himanshu.dev@gmail.com",
-    phone: "+91 9876543210",
-    location: "Delhi, India",
-    linkedin: "linkedin.com/in/himanshu-dev",
-    github: "github.com/himanshu-dev"
-  },
-
-  aboutMe:
-    "Results-driven Full Stack Developer with strong foundation in React, Node.js, MongoDB, and Express. Experienced in building scalable web applications, REST APIs, and responsive UI systems. Demonstrated expertise through multiple production-ready projects with focus on performance optimization, clean architecture, and seamless user experience.",
-
-  education: {
-    college: "Delhi Technical University",
-    degree: "B.Tech",
-    branch: "Computer Science",
-    year: "2021 - 2025",
-    cgpa: "8.3"
-  },
-
-  skills: [
-    "React",
-    "Node.js",
-    "MongoDB",
-    "Express",
-    "TypeScript",
-    "JavaScript",
-    "Tailwind CSS",
-    "REST API",
-    "Redux"
-  ],
-
-  isFresher: false,
-
-  experience: [
-    {
-      company: "TechNova Solutions",
-      role: "Frontend Developer Intern",
-      duration: "Jan 2024 - Apr 2024",
-      description: `- Developed responsive dashboard UI using React and Tailwind CSS improving usability
-- Integrated REST APIs and optimized data fetching logic
-- Fixed critical UI bugs and improved application performance
-- Collaborated with backend team for API contract implementation`
-    },
-    {
-      company: "CodeCraft",
-      role: "MERN Stack Developer",
-      duration: "May 2024 - Present",
-      description: `- Built full-stack web application using React, Node.js, MongoDB
-- Implemented JWT authentication and protected routes
-- Optimized MongoDB queries improving response time
-- Designed reusable component architecture`
-    }
-  ],
-
-  projects: [
-    {
-      name: "AI Resume Builder",
-      techStack: "React, Node.js, MongoDB, LangGraph",
-      description: `- Built AI-powered resume builder with ATS optimization
-- Implemented multi-agent pipeline using LangGraph
-- Created dynamic resume preview and PDF export
-- Integrated LLM for content generation`
-    },
-    {
-      name: "Realtime Chat App",
-      techStack: "React, Socket.io, Node.js",
-      description: `- Developed realtime chat application using Socket.io
-- Implemented online/offline presence tracking
-- Built responsive UI with Tailwind CSS
-- Added message persistence using MongoDB`
-    },
-    {
-      name: "Movie Streaming App",
-      techStack: "React, TMDB API, Tailwind",
-      description: `- Built movie browsing app with search and filters
-- Integrated TMDB API for dynamic data
-- Implemented responsive UI design
-- Optimized API calls and caching`
-    }
-  ],
-
-  finalReview: "9",
-
-  suggestions: [
-    "Add GitHub links to projects",
-    "Include metrics in experience bullet points",
-    "Add CI/CD or deployment tools",
-    "Mention testing frameworks",
-    "Add cloud skills like AWS"
-  ]
-};
-
 // fonts
 const fonts = {
   heading: "'Palatino Linotype', Palatino, 'Book Antiqua', Georgia, serif",
@@ -122,16 +27,16 @@ export default function PreviewPage() {
   const navigate = useNavigate();
   const resumeRef = useRef();
 
-  // const resume = state?.resume;
-  const resume = fakeResume;
+  const resume = state?.resume;
 
   const [isEditing, setIsEditing] = useState(false);
   const [downloading, setDownloading] = useState(false);
+  const [editedResume, setEditedResume] = useState(resume);
 
   if (!resume) {
     return (
       <div style={{ display: "flex", height: "100vh", alignItems: "center", justifyContent: "center" }}>
-        No data
+        Data not found
       </div>
     );
   }
@@ -146,61 +51,58 @@ export default function PreviewPage() {
     suggestions,
     aboutMe,
     isFresher,
-  } = resume;
+  } = editedResume;
 
   const scorePercent = (parseFloat(finalReview || "0") / 10) * 100;
 
- const downloadPDF = async () => {
-  setDownloading(true);
+  const downloadPDF = async () => {
+    setDownloading(true);
 
-  await new Promise((r) => setTimeout(r, 300));
+    await new Promise((r) => setTimeout(r, 300));
 
-  try {
-    const element = resumeRef.current;
+    try {
+      const element = resumeRef.current;
 
-    const canvas = await html2canvas(element, {
-      scale: 2,
-      useCORS: true,
-      backgroundColor: "#ffffff",
-      foreignObjectRendering: true, // ✅ tailwind v4 fix
-      logging: false
-    });
+      const canvas = await html2canvas(element, {
+        scale: 2,
+        useCORS: true,
+        logging:false,
+        backgroundColor: "#ffffff",
+        scrollX: 0,
+        scrollY: 0,
+        windowWidth: element.scrollWidth,
+        windowHeight: element.scrollHeight
+      });
 
-    const imgData = canvas.toDataURL("image/png");
+      const imgData = canvas.toDataURL("image/jpeg");
 
-    const pdf = new jsPDF({
-      orientation: "portrait",
-      unit: "mm",
-      format: "a4"
-    });
+      const pdf = new jsPDF("p", "mm", "a4");
 
-    const pdfWidth = pdf.internal.pageSize.getWidth();
-    const pdfHeight = pdf.internal.pageSize.getHeight();
+      const pdfWidth = 210;
+      const pdfHeight = 297;
 
-    const imgHeight = (canvas.height * pdfWidth) / canvas.width;
+      const imgHeight = (canvas.height * pdfWidth) / canvas.width;
 
-    let heightLeft = imgHeight;
-    let position = 0;
+      let heightLeft = imgHeight;
+      let position = 0;
 
-    // first page
-    pdf.addImage(imgData, "PNG", 0, position, pdfWidth, imgHeight);
-    heightLeft -= pdfHeight;
-
-    // multiple pages
-    while (heightLeft > 0) {
-      position = heightLeft - imgHeight;
-      pdf.addPage();
-      pdf.addImage(imgData, "PNG", 0, position, pdfWidth, imgHeight);
+      pdf.addImage(imgData, "jpeg", 0, position, pdfWidth, imgHeight);
       heightLeft -= pdfHeight;
-    }
 
-    pdf.save(`${personalInfo?.name || "resume"}.pdf`);
-  } catch (error) {
-    console.error("PDF generation error:", error);
-  } finally {
-    setDownloading(false);
-  }
-};
+      while (heightLeft > 0) {
+        position = - (imgHeight - heightLeft);
+        pdf.addPage();
+        pdf.addImage(imgData, "jpeg", 0, position, pdfWidth, imgHeight);
+        heightLeft -= pdfHeight;
+      }
+
+      pdf.save(`${personalInfo?.name || "resume"}.pdf`);
+    } catch (error) {
+      console.error("PDF generation error:", error);
+    } finally {
+      setDownloading(false);
+    }
+  };
 
   const makeLink = (text, href) => (
     <a
@@ -233,7 +135,7 @@ export default function PreviewPage() {
           ref={resumeRef}
           style={{
             background: "white",
-            maxWidth: "794px",
+            width: "794px",
             color: "#111",
             margin: "0 auto",
             padding: "56px 64px",
@@ -287,16 +189,34 @@ export default function PreviewPage() {
           {aboutMe && (
             <div style={{ marginBottom: "22px" }}>
               <div style={sectionTitleStyle}>Professional Summary</div>
-              <p
-                style={{
-                  fontSize: "13px",
-                  lineHeight: "1.7",
-                  fontFamily: fonts.body,
-                  color: "#222",
-                }}
-              >
-                {aboutMe}
-              </p>
+              {isEditing ? (
+                <textarea
+                  value={aboutMe}
+                  onChange={(e) =>
+                    setEditedResume({
+                      ...editedResume,
+                      aboutMe: e.target.value
+                    })
+                  }
+                  style={{
+                    width: "100%",
+                    fontSize: "13px",
+                    padding: "8px",
+                    border: "1px solid #ddd"
+                  }}
+                />
+              ) : (
+                <p
+                  style={{
+                    fontSize: "13px",
+                    lineHeight: "1.7",
+                    fontFamily: fonts.body,
+                    color: "#222",
+                  }}
+                >
+                  {aboutMe}
+                </p>
+              )}
             </div>
           )}
 
@@ -354,18 +274,39 @@ export default function PreviewPage() {
                     </p>
                   </div>
 
-                  <pre
-                    style={{
-                      whiteSpace: "pre-wrap",
-                      fontSize: "13px",
-                      lineHeight: "1.6",
-                      fontFamily: fonts.body,
-                      marginTop: "4px",
-                      color: "#222",
-                    }}
-                  >
-                    {exp.description}
-                  </pre>
+                  {isEditing ? (
+                    <textarea
+                      value={exp.description}
+                      onChange={(e) => {
+                        const updated = [...experience];
+                        updated[i].description = e.target.value;
+
+                        setEditedResume({
+                          ...editedResume,
+                          experience: updated
+                        });
+                      }}
+                      style={{
+                        width: "100%",
+                        minHeight: "80px",
+                        border: "1px solid #ddd",
+                        padding: "8px"
+                      }}
+                    />
+                  ) : (
+                    <pre
+                      style={{
+                        whiteSpace: "pre-wrap",
+                        fontSize: "13px",
+                        lineHeight: "1.6",
+                        fontFamily: fonts.body,
+                        marginTop: "4px",
+                        color: "#222",
+                      }}
+                    >
+                      {exp.description}
+                    </pre>
+                  )}
                 </div>
               ))}
             </div>
@@ -390,17 +331,38 @@ export default function PreviewPage() {
                     </p>
                   </div>
 
-                  <pre
-                    style={{
-                      whiteSpace: "pre-wrap",
-                      fontSize: "13px",
-                      lineHeight: "1.6",
-                      fontFamily: fonts.body,
-                      marginTop: "4px",
-                    }}
-                  >
-                    {p.description}
-                  </pre>
+                  {isEditing ? (
+                    <textarea
+                      value={p.description}
+                      onChange={(e) => {
+                        const updated = [...projects];
+                        updated[i].description = e.target.value;
+
+                        setEditedResume({
+                          ...editedResume,
+                          projects: updated
+                        });
+                      }}
+                      style={{
+                        width: "100%",
+                        minHeight: "80px",
+                        border: "1px solid #ddd",
+                        padding: "8px"
+                      }}
+                    />
+                  ) : (
+                    <pre
+                      style={{
+                        whiteSpace: "pre-wrap",
+                        fontSize: "13px",
+                        lineHeight: "1.6",
+                        fontFamily: fonts.body,
+                        marginTop: "4px",
+                      }}
+                    >
+                      {p.description}
+                    </pre>
+                  )}
                 </div>
               ))}
             </div>
@@ -478,6 +440,22 @@ export default function PreviewPage() {
         </div>
 
         {/* buttons */}
+
+        <button
+          onClick={() => setIsEditing(!isEditing)}
+          style={{
+            padding: "10px",
+            background: "#111",
+            color: "white",
+            border: "none",
+            borderRadius: "8px",
+            cursor: "pointer"
+          }}
+        >
+          {isEditing ? "Save Changes" : "Edit Resume"}
+        </button>
+
+
         <button
           onClick={downloadPDF}
           style={{
@@ -522,7 +500,7 @@ export default function PreviewPage() {
                 fontSize: "13px",
                 fontWeight: "600",
                 marginBottom: "10px",
-                color:"#222"
+                color: "#222"
               }}
             >
               AI Suggestions
@@ -534,7 +512,7 @@ export default function PreviewPage() {
                 style={{
                   display: "flex",
                   gap: "8px",
-                  color:"#222"
+                  color: "#222"
                 }}
               >
                 <div
@@ -544,7 +522,7 @@ export default function PreviewPage() {
                     background: "#185FA5",
                     borderRadius: "50%",
                     marginTop: "6px",
-                    
+
                   }}
                 />
                 <p

@@ -38,8 +38,9 @@ const state = new StateSchema({
     })).default([]),
 
     isFresher: z.boolean().default(false),
+    suggestion: z.array(z.string()).default([]),
 
-    finalReview: z.string().default('0'),//mistral
+    finalReview: z.string().default(""),//mistral
 });
 
 const GenAboutNode: GraphNode<typeof state> = async (state) => {
@@ -207,6 +208,7 @@ Your task:
 3. Improve weak bullet points
 4. Keep same structure
 5. Make resume 100% ATS friendly
+6. find out the missing points and add them in the suggestion section
 
 INPUT:
 
@@ -227,6 +229,7 @@ REQUIREMENTS:
 - Keep bullet points format
 - Use strong action verbs
 - Add ATS keywords naturally
+- Add suggestion which is required in this resume
 - Keep professional tone
 - Keep concise
 
@@ -236,10 +239,11 @@ RETURN STRICT JSON:
 "about": "corrected summary",
 "experience": [ corrected experience array ],
 "projects": [ corrected projects array ],
-"score": number (1-10)
+"suggestion: [filled your suggestion],
+"finalReview": string (0 to 10)
 }
 
-Score rules:
+finalReview rules:
 9-10 = excellent ATS ready
 7-8 = good but minor fixes
 5-6 = average
@@ -253,7 +257,7 @@ below 5 = poor
       ? res.content
       : res.content.map(c => ("text" in c ? c.text : "")).join("");
 
-  let parsed;
+  let parsed: any;
 
   try {
     parsed = JSON.parse(content);
@@ -266,7 +270,8 @@ below 5 = poor
     aboutMe: parsed.about,
     experience: parsed.experience,
     projects: parsed.projects,
-    finalReview: String(parsed.score)
+    suggestion: parsed.suggestion,  
+    finalReview: String(parsed.finalReview)
   };
 };
 
@@ -310,6 +315,7 @@ export default async function runResumeAgent(userData: any) {
             aboutMe: result.aboutMe || userData.aboutMe || "",
             experience: result.experience || userData.experience || [],
             projects: result.projects || userData.projects || [],
+            suggestion: result.suggestion || userData.suggestion || [],
             finalReview: result.finalReview || "0",
         };
 
