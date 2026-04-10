@@ -38,7 +38,7 @@ const state = new StateSchema({
     })).default([]),
 
     isFresher: z.boolean().default(false),
-    suggestion: z.array(z.string()).default([]),
+    suggestions: z.array(z.string()).default([]),
 
     finalReview: z.string().default(""),//mistral
 });
@@ -208,7 +208,7 @@ Your task:
 3. Improve weak bullet points
 4. Keep same structure
 5. Make resume 100% ATS friendly
-6. find out the missing points and add them in the suggestion section
+6. Find missing points and add them in suggestions
 
 INPUT:
 
@@ -229,49 +229,53 @@ REQUIREMENTS:
 - Keep bullet points format
 - Use strong action verbs
 - Add ATS keywords naturally
-- Add suggestion which is required in this resume
 - Keep professional tone
 - Keep concise
 
-RETURN STRICT JSON:
+IMPORTANT RULES:
+- DO NOT change any personal information (name, college, CGPA, email, phone, location)
+- DO NOT invent or modify education details
+- DO NOT use markdown, asterisks (**), or bold formatting
+- Only improve grammar, ATS keywords, and bullet points
+- Keep all facts exactly as provided
 
 {
-"about": "corrected summary",
-"experience": [ corrected experience array ],
-"projects": [ corrected projects array ],
-"suggestion: [filled your suggestion],
-"finalReview": string (0 to 10)
-}
-
-finalReview rules:
-9-10 = excellent ATS ready
-7-8 = good but minor fixes
-5-6 = average
-below 5 = poor
-`;
+  "about": "corrected summary",
+  "experience": [],
+  "projects": [],
+  "suggestions": ["tip1", "tip2"],
+  "finalReview": "7.5"
+}`;
 
   const res = await mistralChat.invoke(prompt);
 
   const content =
     typeof res.content === "string"
       ? res.content
-      : res.content.map(c => ("text" in c ? c.text : "")).join("");
+      : res.content.map((c) => ("text" in c ? c.text : "")).join("");
+
+  // ✅ Backticks strip karo
+  const cleaned = content
+    .replace(/```json/gi, "")
+    .replace(/```/g, "")
+    .trim();
 
   let parsed: any;
 
   try {
-    parsed = JSON.parse(content);
-  } catch {
+    parsed = JSON.parse(cleaned);
+  } catch (e) {
+    console.error("JSON parse failed:", cleaned); // ✅ Ab dekh payega kya aa raha hai
     return state;
   }
 
   return {
     ...state,
-    aboutMe: parsed.about,
-    experience: parsed.experience,
-    projects: parsed.projects,
-    suggestion: parsed.suggestion,  
-    finalReview: String(parsed.finalReview)
+    aboutMe: parsed.about ?? state.aboutMe,
+    experience: parsed.experience ?? state.experience,
+    projects: parsed.projects ?? state.projects,
+    suggestions: parsed.suggestions ?? [],
+    finalReview: String(parsed.finalReview ?? ""),
   };
 };
 
@@ -293,6 +297,7 @@ const graph = new StateGraph(state)
 
     .addEdge("GenExperienceNode", "GenProjectsNode")
     .addEdge("GenProjectsNode", "FinalNode")
+    .addEdge("FinalNode", END)
 
 
     .compile();
@@ -309,13 +314,13 @@ export default async function runResumeAgent(userData: any) {
 
         console.log("Resume Graph Execution Completed!");
         console.log("Execution time:", Date.now() - start, "ms");
-        console.log("Final Graph Result:", result);
+        console.log("Final Graph");
 
         return {
             aboutMe: result.aboutMe || userData.aboutMe || "",
             experience: result.experience || userData.experience || [],
             projects: result.projects || userData.projects || [],
-            suggestion: result.suggestion || userData.suggestion || [],
+            suggestions: result.suggestions || userData.suggestions || [],
             finalReview: result.finalReview || "0",
         };
 

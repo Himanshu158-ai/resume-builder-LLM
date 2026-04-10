@@ -3,25 +3,6 @@ import { useRef, useState } from "react";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas-pro";
 
-// fonts
-const fonts = {
-  heading: "'Palatino Linotype', Palatino, 'Book Antiqua', Georgia, serif",
-  body: "Georgia, 'Times New Roman', serif",
-  ui: "-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
-};
-
-const sectionTitleStyle = {
-  fontSize: "10.5px",
-  fontWeight: "700",
-  letterSpacing: "2px",
-  textTransform: "uppercase",
-  color: "#1a1a1a",
-  borderBottom: "1px solid #999",
-  paddingBottom: "3px",
-  marginBottom: "10px",
-  fontFamily: fonts.ui,
-};
-
 export default function PreviewPage() {
   const { state } = useLocation();
   const navigate = useNavigate();
@@ -32,10 +13,11 @@ export default function PreviewPage() {
   const [isEditing, setIsEditing] = useState(false);
   const [downloading, setDownloading] = useState(false);
   const [editedResume, setEditedResume] = useState(resume);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   if (!resume) {
     return (
-      <div style={{ display: "flex", height: "100vh", alignItems: "center", justifyContent: "center" }}>
+      <div className="flex h-screen items-center justify-center text-gray-500 text-sm">
         Data not found
       </div>
     );
@@ -57,30 +39,24 @@ export default function PreviewPage() {
 
   const downloadPDF = async () => {
     setDownloading(true);
-
     await new Promise((r) => setTimeout(r, 300));
-
     try {
       const element = resumeRef.current;
-
       const canvas = await html2canvas(element, {
         scale: 2,
         useCORS: true,
-        logging:false,
+        logging: false,
         backgroundColor: "#ffffff",
         scrollX: 0,
         scrollY: 0,
         windowWidth: element.scrollWidth,
-        windowHeight: element.scrollHeight
+        windowHeight: element.scrollHeight,
       });
 
       const imgData = canvas.toDataURL("image/jpeg");
-
       const pdf = new jsPDF("p", "mm", "a4");
-
       const pdfWidth = 210;
       const pdfHeight = 297;
-
       const imgHeight = (canvas.height * pdfWidth) / canvas.width;
 
       let heightLeft = imgHeight;
@@ -90,7 +66,7 @@ export default function PreviewPage() {
       heightLeft -= pdfHeight;
 
       while (heightLeft > 0) {
-        position = - (imgHeight - heightLeft);
+        position = -(imgHeight - heightLeft);
         pdf.addPage();
         pdf.addImage(imgData, "jpeg", 0, position, pdfWidth, imgHeight);
         heightLeft -= pdfHeight;
@@ -109,111 +85,82 @@ export default function PreviewPage() {
       href={href}
       target="_blank"
       rel="noreferrer"
-      style={{
-        color: "#1a1a1a",
-        textDecoration: "none",
-        borderBottom: "1px solid #aaa",
-      }}
+      className="text-gray-800 no-underline border-b border-gray-400 hover:border-gray-700 transition-colors"
     >
       {text}
     </a>
   );
 
+  const SectionTitle = ({ children }) => (
+    <div className="text-[10.5px] font-bold tracking-widest uppercase text-gray-900 border-b border-gray-400 pb-1 mb-3 font-sans">
+      {children}
+    </div>
+  );
+
   return (
-    <div
-      style={{
-        display: "flex",
-        height: "100vh",
-        overflow: "hidden",
-        background: "#f0f0f0",
-        fontFamily: fonts.ui,
-      }}
-    >
-      {/* LEFT */}
-      <div style={{ flex: 1, overflowY: "auto", padding: "32px 24px" }}>
+    <div className="flex flex-col lg:flex-row h-screen bg-gray-100 font-sans overflow-hidden">
+
+      {/* ── MOBILE TOP BAR ── */}
+      <div className="lg:hidden flex items-center justify-between bg-white border-b border-gray-200 px-4 py-3 sticky top-0 z-30 shadow-sm">
+        <span className="font-semibold text-gray-800 text-sm">Resume Preview</span>
+        <div className="flex gap-2">
+          <button
+            onClick={downloadPDF}
+            className="text-xs bg-blue-700 text-white px-3 py-1.5 rounded-md font-semibold"
+          >
+            {downloading ? "..." : "Download"}
+          </button>
+          <button
+            onClick={() => setSidebarOpen(!sidebarOpen)}
+            className="text-xs bg-gray-900 text-white px-3 py-1.5 rounded-md"
+          >
+            {sidebarOpen ? "Close" : "Score & Tips"}
+          </button>
+        </div>
+      </div>
+
+      {/* ── LEFT: RESUME PREVIEW ── */}
+      <div className="flex-1 overflow-y-auto px-3 py-5 lg:px-6 lg:py-8">
         <div
           ref={resumeRef}
+          className="bg-white text-gray-900 mx-auto shadow-md"
           style={{
-            background: "white",
             width: "794px",
-            color: "#111",
-            margin: "0 auto",
-            padding: "56px 64px",
+            maxWidth: "100%",
+            padding: "clamp(24px, 5vw, 56px) clamp(20px, 6vw, 64px)",
             minHeight: "1123px",
-            boxShadow: "0 2px 12px rgba(0,0,0,0.08)",
+            fontFamily: "'Georgia', 'Times New Roman', serif",
           }}
         >
           {/* HEADER */}
-          <div
-            style={{
-              borderBottom: "2px solid #1a1a1a",
-              paddingBottom: "14px",
-              marginBottom: "22px",
-            }}
-          >
+          <div className="border-b-2 border-gray-900 pb-3 mb-5">
             <h1
-              style={{
-                fontSize: "28px",
-                fontWeight: "700",
-                margin: 0,
-                fontFamily: fonts.heading,
-              }}
+              className="text-2xl lg:text-[28px] font-bold m-0"
+              style={{ fontFamily: "'Palatino Linotype', Palatino, 'Book Antiqua', Georgia, serif" }}
             >
               {personalInfo?.name}
             </h1>
-
-            <div
-              style={{
-                display: "flex",
-                flexWrap: "wrap",
-                gap: "16px",
-                marginTop: "8px",
-                fontSize: "12.5px",
-              }}
-            >
-              {personalInfo?.email &&
-                makeLink(personalInfo.email, `mailto:${personalInfo.email}`)}
+            <div className="flex flex-wrap gap-x-4 gap-y-1 mt-2 text-[12.5px] text-gray-700">
+              {personalInfo?.email && makeLink(personalInfo.email, `mailto:${personalInfo.email}`)}
               {personalInfo?.phone && <span>{personalInfo.phone}</span>}
               {personalInfo?.location && <span>{personalInfo.location}</span>}
-              {personalInfo?.linkedin &&
-                makeLink(
-                  personalInfo.linkedin,
-                  `https://${personalInfo.linkedin}`
-                )}
-              {personalInfo?.github &&
-                makeLink(personalInfo.github, `https://${personalInfo.github}`)}
+              {personalInfo?.linkedin && makeLink(personalInfo.linkedin, `https://${personalInfo.linkedin}`)}
+              {personalInfo?.github && makeLink(personalInfo.github, `https://${personalInfo.github}`)}
             </div>
           </div>
 
-          {/* ABOUT */}
+          {/* ABOUT ME */}
           {aboutMe && (
-            <div style={{ marginBottom: "22px" }}>
-              <div style={sectionTitleStyle}>Professional Summary</div>
+            <div className="mb-5">
+              <SectionTitle>Professional Summary</SectionTitle>
               {isEditing ? (
                 <textarea
                   value={aboutMe}
-                  onChange={(e) =>
-                    setEditedResume({
-                      ...editedResume,
-                      aboutMe: e.target.value
-                    })
-                  }
-                  style={{
-                    width: "100%",
-                    fontSize: "13px",
-                    padding: "8px",
-                    border: "1px solid #ddd"
-                  }}
+                  onChange={(e) => setEditedResume({ ...editedResume, aboutMe: e.target.value })}
+                  className="w-full text-[13px] p-2 border border-gray-300 rounded resize-y min-h-[80px] font-serif"
                 />
               ) : (
-                <p
-                  style={{
-                    fontSize: "13px",
-                    lineHeight: "1.7",
-                    fontFamily: fonts.body,
-                    color: "#222",
-                  }}
-                >
+                <p className="text-[13px] leading-relaxed text-gray-800 m-0">
                   {aboutMe}
                 </p>
               )}
@@ -222,32 +169,26 @@ export default function PreviewPage() {
 
           {/* SKILLS */}
           {skills?.length > 0 && (
-            <div style={{ marginBottom: "22px" }}>
-              <div style={sectionTitleStyle}>Skills</div>
-              <p style={{ fontSize: "13px", fontFamily: fonts.body }}>
-                {skills.join(" • ")}
-              </p>
+            <div className="mb-5">
+              <SectionTitle>Skills</SectionTitle>
+              <p className="text-[13px] text-gray-800 m-0">{skills.join(" • ")}</p>
             </div>
           )}
 
           {/* EDUCATION */}
           {education?.college && (
-            <div style={{ marginBottom: "22px" }}>
-              <div style={sectionTitleStyle}>Education</div>
-
-              <div style={{ display: "flex", justifyContent: "space-between" }}>
+            <div className="mb-5">
+              <SectionTitle>Education</SectionTitle>
+              <div className="flex justify-between items-start flex-wrap gap-2">
                 <div>
-                  <p style={{ fontWeight: 600, margin: 0 }}>
-                    {education.college}
-                  </p>
-                  <p style={{ margin: 0, fontSize: "12px" }}>
+                  <p className="font-semibold m-0 text-[13px]">{education.college}</p>
+                  <p className="m-0 text-[12px] text-gray-600">
                     {education.degree} — {education.branch}
                   </p>
                 </div>
-
-                <div style={{ textAlign: "right" }}>
-                  <p style={{ margin: 0 }}>{education.year}</p>
-                  {education.cgpa && <p>CGPA: {education.cgpa}</p>}
+                <div className="text-right text-[12px] text-gray-600">
+                  <p className="m-0">{education.year}</p>
+                  {education.cgpa && <p className="m-0">CGPA: {education.cgpa}</p>}
                 </div>
               </div>
             </div>
@@ -255,55 +196,28 @@ export default function PreviewPage() {
 
           {/* EXPERIENCE */}
           {!isFresher && experience?.length > 0 && (
-            <div style={{ marginBottom: "22px" }}>
-              <div style={sectionTitleStyle}>Experience</div>
-
+            <div className="mb-5">
+              <SectionTitle>Experience</SectionTitle>
               {experience.map((exp, i) => (
-                <div key={i} style={{ marginBottom: "14px" }}>
-                  <div
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                    }}
-                  >
-                    <p style={{ fontWeight: 600, margin: 0 }}>
+                <div key={i} className="mb-4">
+                  <div className="flex justify-between items-start flex-wrap gap-1">
+                    <p className="font-semibold m-0 text-[13px]">
                       {exp.role} | {exp.company}
                     </p>
-                    <p style={{ margin: 0, fontSize: "12px" }}>
-                      {exp.duration}
-                    </p>
+                    <p className="m-0 text-[12px] text-gray-500">{exp.duration}</p>
                   </div>
-
                   {isEditing ? (
                     <textarea
                       value={exp.description}
                       onChange={(e) => {
                         const updated = [...experience];
                         updated[i].description = e.target.value;
-
-                        setEditedResume({
-                          ...editedResume,
-                          experience: updated
-                        });
+                        setEditedResume({ ...editedResume, experience: updated });
                       }}
-                      style={{
-                        width: "100%",
-                        minHeight: "80px",
-                        border: "1px solid #ddd",
-                        padding: "8px"
-                      }}
+                      className="w-full min-h-[80px] border border-gray-300 rounded p-2 text-[13px] font-serif resize-y mt-1"
                     />
                   ) : (
-                    <pre
-                      style={{
-                        whiteSpace: "pre-wrap",
-                        fontSize: "13px",
-                        lineHeight: "1.6",
-                        fontFamily: fonts.body,
-                        marginTop: "4px",
-                        color: "#222",
-                      }}
-                    >
+                    <pre className="whitespace-pre-wrap text-[13px] leading-relaxed font-serif mt-1 text-gray-800 m-0">
                       {exp.description}
                     </pre>
                   )}
@@ -314,52 +228,26 @@ export default function PreviewPage() {
 
           {/* PROJECTS */}
           {projects?.length > 0 && (
-            <div style={{ marginBottom: "22px" }}>
-              <div style={sectionTitleStyle}>Projects</div>
-
+            <div className="mb-5">
+              <SectionTitle>Projects</SectionTitle>
               {projects.map((p, i) => (
-                <div key={i} style={{ marginBottom: "14px" }}>
-                  <div
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                    }}
-                  >
-                    <p style={{ fontWeight: 600, margin: 0 }}>{p.name}</p>
-                    <p style={{ margin: 0, fontSize: "12px" }}>
-                      {p.techStack}
-                    </p>
+                <div key={i} className="mb-4">
+                  <div className="flex justify-between items-start flex-wrap gap-1">
+                    <p className="font-semibold m-0 text-[13px] font-palatino">{p.name}</p>
+                    <p className="m-0 text-[12px] text-gray-500">{p.techStack}</p>
                   </div>
-
                   {isEditing ? (
                     <textarea
                       value={p.description}
                       onChange={(e) => {
                         const updated = [...projects];
                         updated[i].description = e.target.value;
-
-                        setEditedResume({
-                          ...editedResume,
-                          projects: updated
-                        });
+                        setEditedResume({ ...editedResume, projects: updated });
                       }}
-                      style={{
-                        width: "100%",
-                        minHeight: "80px",
-                        border: "1px solid #ddd",
-                        padding: "8px"
-                      }}
+                      className="w-full min-h-[80px] border border-gray-300 rounded p-2 text-[13px] font-serif resize-y mt-1"
                     />
                   ) : (
-                    <pre
-                      style={{
-                        whiteSpace: "pre-wrap",
-                        fontSize: "13px",
-                        lineHeight: "1.6",
-                        fontFamily: fonts.body,
-                        marginTop: "4px",
-                      }}
-                    >
+                    <pre className="whitespace-pre-wrap text-[13px] leading-relaxed font-serif mt-1 text-gray-700 m-0">
                       {p.description}
                     </pre>
                   )}
@@ -370,176 +258,86 @@ export default function PreviewPage() {
         </div>
       </div>
 
-      {/* RIGHT SIDEBAR */}
+      {/* ── RIGHT SIDEBAR ── */}
+      {/* Mobile: slides in as overlay from bottom; Desktop: fixed right panel */}
       <div
-        style={{
-          width: "280px",
-          background: "#f8f9fb",
-          borderLeft: "1px solid #e5e7eb",
-          padding: "20px",
-          display: "flex",
-          flexDirection: "column",
-          gap: "16px",
-          fontFamily: fonts.ui
-        }}
+        className={`
+          fixed bottom-0 left-0 right-0 z-20 bg-[#f8f9fb] border-t border-gray-200
+          transition-transform duration-300 ease-in-out
+          ${sidebarOpen ? "translate-y-0" : "translate-y-full"}
+          lg:static lg:translate-y-0 lg:w-72 lg:border-t-0 lg:border-l lg:border-gray-200
+          lg:flex lg:flex-col lg:overflow-y-auto
+          max-h-[80vh] lg:max-h-full overflow-y-auto
+        `}
       >
-        {/* Score Card */}
-        <div
-          style={{
-            background: "white",
-            borderRadius: "12px",
-            padding: "18px",
-            boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
-            border: "1px solid #eee"
-          }}
-        >
-          <p
-            style={{
-              fontSize: "12px",
-              color: "#777",
-              marginBottom: "6px",
-              letterSpacing: "1px"
-            }}
-          >
-            ATS SCORE
-          </p>
+        <div className="flex flex-col gap-4 p-5">
 
-          <div style={{ display: "flex", alignItems: "baseline", gap: "6px" }}>
-            <span
-              style={{
-                fontSize: "36px",
-                fontWeight: "700",
-                color: "#111"
-              }}
-            >
-              {finalReview}
-            </span>
-            <span style={{ fontSize: "14px", color: "#999" }}>/10</span>
-          </div>
-
-          {/* progress */}
-          <div
-            style={{
-              height: "6px",
-              background: "#eee",
-              borderRadius: "999px",
-              marginTop: "10px",
-              overflow: "hidden"
-            }}
-          >
-            <div
-              style={{
-                width: `${scorePercent}%`,
-                height: "6px",
-                background: "linear-gradient(90deg,#1D9E75,#22c55e)",
-                borderRadius: "999px",
-                transition: "0.4s"
-              }}
-            />
-          </div>
-        </div>
-
-        {/* buttons */}
-
-        <button
-          onClick={() => setIsEditing(!isEditing)}
-          style={{
-            padding: "10px",
-            background: "#111",
-            color: "white",
-            border: "none",
-            borderRadius: "8px",
-            cursor: "pointer"
-          }}
-        >
-          {isEditing ? "Save Changes" : "Edit Resume"}
-        </button>
-
-
-        <button
-          onClick={downloadPDF}
-          style={{
-            padding: "10px",
-            background: "#185FA5",
-            color: "white",
-            border: "none",
-            borderRadius: "8px",
-            fontWeight: "600",
-            cursor: "pointer"
-          }}
-        >
-          {downloading ? "Generating..." : "Download PDF"}
-        </button>
-
-        <button
-          onClick={() => navigate("/")}
-          style={{
-            padding: "10px",
-            background: "white",
-            color: "#444",
-            border: "1px solid #ddd",
-            borderRadius: "8px",
-            cursor: "pointer"
-          }}
-        >
-          Back to Form
-        </button>
-
-        {/* suggestions */}
-        {suggestions?.length > 0 && (
-          <div
-            style={{
-              background: "white",
-              borderRadius: "12px",
-              padding: "16px",
-              border: "1px solid #eee"
-            }}
-          >
-            <p
-              style={{
-                fontSize: "13px",
-                fontWeight: "600",
-                marginBottom: "10px",
-                color: "#222"
-              }}
-            >
-              AI Suggestions
-            </p>
-
-            {suggestions.map((s, i) => (
+          {/* ATS Score Card */}
+          <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
+            <p className="text-[11px] text-gray-400 tracking-widest uppercase mb-1">ATS Score</p>
+            <div className="flex items-baseline gap-1">
+              <span className="text-4xl font-bold text-gray-900">{finalReview}</span>
+              <span className="text-sm text-gray-400">/10</span>
+            </div>
+            <div className="h-1.5 bg-gray-100 rounded-full mt-3 overflow-hidden">
               <div
-                key={i}
+                className="h-1.5 rounded-full transition-all duration-500"
                 style={{
-                  display: "flex",
-                  gap: "8px",
-                  color: "#222"
+                  width: `${scorePercent}%`,
+                  background: "linear-gradient(90deg, #1D9E75, #22c55e)",
                 }}
-              >
-                <div
-                  style={{
-                    width: "6px",
-                    height: "6px",
-                    background: "#185FA5",
-                    borderRadius: "50%",
-                    marginTop: "6px",
-
-                  }}
-                />
-                <p
-                  style={{
-                    fontSize: "12px",
-                    color: "#555",
-                    margin: 0,
-                    lineHeight: "1.4"
-                  }}
-                >
-                  {s}
-                </p>
-              </div>
-            ))}
+              />
+            </div>
           </div>
-        )}
+
+          {/* Edit Button */}
+          <button
+            onClick={() => setIsEditing(!isEditing)}
+            className="w-full py-2.5 bg-gray-900 text-white rounded-lg text-sm font-medium hover:bg-gray-700 transition-colors cursor-pointer"
+          >
+            {isEditing ? "✓ Save Changes" : "✎ Edit Resume"}
+          </button>
+
+          {/* Download Button */}
+          <button
+            onClick={downloadPDF}
+            className="w-full py-2.5 bg-blue-700 text-white rounded-lg text-sm font-semibold hover:bg-blue-800 transition-colors cursor-pointer"
+          >
+            {downloading ? "Generating PDF..." : "⬇ Download PDF"}
+          </button>
+
+          {/* Back Button */}
+          <button
+            onClick={() => navigate("/")}
+            className="w-full py-2.5 bg-white text-gray-500 border border-gray-200 rounded-lg text-sm hover:bg-gray-50 transition-colors cursor-pointer"
+          >
+            ← Back to Form
+          </button>
+
+          {/* AI Suggestions */}
+          {suggestions?.length > 0 && (
+            <div className="bg-white rounded-xl p-4 border border-gray-100">
+              <p className="text-[13px] font-semibold text-gray-800 mb-3">AI Suggestions</p>
+              <div className="flex flex-col gap-2.5">
+                {suggestions.map((s, i) => (
+                  <div key={i} className="flex gap-2.5 items-start">
+                    <div className="w-1.5 h-1.5 rounded-full bg-blue-600 mt-1.5 shrink-0" />
+                    <p className="text-[12px] text-gray-500 m-0 leading-snug">{s}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
       </div>
+
+      {/* Mobile backdrop */}
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black/30 z-10 lg:hidden"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
     </div>
   );
 }

@@ -28,7 +28,6 @@ export default function FormPage() {
   const handleSubmit = async () => {
     setLoading(true);
     try {
-      console.log(data);
       const res = await axios.post("http://localhost:3000/api/generate", data);
       navigate("/preview", { state: { resume: res.data } });
     } catch (err) {
