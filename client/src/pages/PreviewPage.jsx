@@ -38,47 +38,68 @@ export default function PreviewPage() {
   const scorePercent = (parseFloat(finalReview || "0") / 10) * 100;
 
   const downloadPDF = async () => {
+    if (!resumeRef.current) return;
     setDownloading(true);
-    await new Promise((r) => setTimeout(r, 300));
+    
+    // Save original styles to restore later
+    const element = resumeRef.current;
+    const originalWidth = element.style.width;
+    const originalMaxWidth = element.style.maxWidth;
+    const originalPadding = element.style.padding;
+    const originalBoxShadow = element.style.boxShadow;
+
     try {
-      const element = resumeRef.current;
+      // ✅ Force A4 dimensions and fixed padding for PDF capture 
+      // This prevents mobile responsive styles from breaking the layout
+      element.style.width = "794px";
+      element.style.maxWidth = "none";
+      element.style.padding = "56px 64px"; 
+      element.style.boxShadow = "none";
+
       const canvas = await html2canvas(element, {
-        scale: 2,
+        scale: 2, // High resolution
         useCORS: true,
         logging: false,
         backgroundColor: "#ffffff",
-        scrollX: 0,
-        scrollY: 0,
-        windowWidth: element.scrollWidth,
-        windowHeight: element.scrollHeight,
+        windowWidth: 794, // Simulate desktop width for capture
       });
 
-      const imgData = canvas.toDataURL("image/jpeg");
+      const imgData = canvas.toDataURL("image/png");
       const pdf = new jsPDF("p", "mm", "a4");
-      const pdfWidth = 210;
-      const pdfHeight = 297;
-      const imgHeight = (canvas.height * pdfWidth) / canvas.width;
-
+      
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = pdf.internal.pageSize.getHeight();
+      
+      const imgWidth = pdfWidth;
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+      
       let heightLeft = imgHeight;
       let position = 0;
 
-      pdf.addImage(imgData, "jpeg", 0, position, pdfWidth, imgHeight);
+      // Add pages
+      pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
       heightLeft -= pdfHeight;
 
       while (heightLeft > 0) {
-        position = -(imgHeight - heightLeft);
+        position = heightLeft - imgHeight;
         pdf.addPage();
-        pdf.addImage(imgData, "jpeg", 0, position, pdfWidth, imgHeight);
+        pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
         heightLeft -= pdfHeight;
       }
 
-      pdf.save(`${personalInfo?.name || "resume"}.pdf`);
+      pdf.save(`${personalInfo?.name?.replace(/\s+/g, "_") || "resume"}.pdf`);
     } catch (error) {
       console.error("PDF generation error:", error);
     } finally {
+      // ✅ Restore original styles
+      element.style.width = originalWidth;
+      element.style.maxWidth = originalMaxWidth;
+      element.style.padding = originalPadding;
+      element.style.boxShadow = originalBoxShadow;
       setDownloading(false);
     }
   };
+
 
   const makeLink = (text, href) => (
     <a
@@ -199,27 +220,36 @@ export default function PreviewPage() {
             <div className="mb-5">
               <SectionTitle>Experience</SectionTitle>
               {experience.map((exp, i) => (
-                <div key={i} className="mb-4">
+                <div key={i} className="mb-4 break-inside-avoid">
                   <div className="flex justify-between items-start flex-wrap gap-1">
                     <p className="font-semibold m-0 text-[13px]">
                       {exp.role} | {exp.company}
                     </p>
                     <p className="m-0 text-[12px] text-gray-500">{exp.duration}</p>
                   </div>
+
                   {isEditing ? (
+                    // ✅ Editing mode — textarea me points join karke dikhao
                     <textarea
-                      value={exp.description}
+                      value={exp.points?.join("\n") || exp.description || ""}
                       onChange={(e) => {
                         const updated = [...experience];
-                        updated[i].description = e.target.value;
+                        updated[i].points = e.target.value.split("\n").filter(p => p.trim() !== "");
                         setEditedResume({ ...editedResume, experience: updated });
                       }}
                       className="w-full min-h-[80px] border border-gray-300 rounded p-2 text-[13px] font-serif resize-y mt-1"
                     />
                   ) : (
-                    <pre className="whitespace-pre-wrap text-[13px] leading-relaxed font-serif mt-1 text-gray-800 m-0">
-                      {exp.description}
-                    </pre>
+                    // ✅ View mode — bullet points render karo
+                    <ul className="mt-1 ml-4 list-disc text-[13px] leading-relaxed font-serif text-gray-800">
+                      {(exp.points?.length > 0 ? exp.points : exp.description?.split("\n"))
+                        ?.filter(p => p.trim() !== "")
+                        ?.map((point, j) => (
+                          <li key={j} className="mb-1 break-inside-avoid">
+                            {point.replace(/^[-•]\s*/, "")}
+                          </li>
+                        ))}
+                    </ul>
                   )}
                 </div>
               ))}
@@ -231,25 +261,34 @@ export default function PreviewPage() {
             <div className="mb-5">
               <SectionTitle>Projects</SectionTitle>
               {projects.map((p, i) => (
-                <div key={i} className="mb-4">
+                <div key={i} className="mb-4 break-inside-avoid">
                   <div className="flex justify-between items-start flex-wrap gap-1">
                     <p className="font-semibold m-0 text-[13px] font-palatino">{p.name}</p>
                     <p className="m-0 text-[12px] text-gray-500">{p.techStack}</p>
                   </div>
+
                   {isEditing ? (
+                    // ✅ Editing mode
                     <textarea
-                      value={p.description}
+                      value={p.points?.join("\n") || p.description || ""}
                       onChange={(e) => {
                         const updated = [...projects];
-                        updated[i].description = e.target.value;
+                        updated[i].points = e.target.value.split("\n").filter(pt => pt.trim() !== "");
                         setEditedResume({ ...editedResume, projects: updated });
                       }}
                       className="w-full min-h-[80px] border border-gray-300 rounded p-2 text-[13px] font-serif resize-y mt-1"
                     />
                   ) : (
-                    <pre className="whitespace-pre-wrap text-[13px] leading-relaxed font-serif mt-1 text-gray-700 m-0">
-                      {p.description}
-                    </pre>
+                    // ✅ View mode — bullet points
+                    <ul className="mt-1 ml-4 list-disc text-[13px] leading-relaxed font-serif text-gray-700">
+                      {(p.points?.length > 0 ? p.points : p.description?.split("\n"))
+                        ?.filter(pt => pt.trim() !== "")
+                        ?.map((point, j) => (
+                          <li key={j} className="mb-1 break-inside-avoid">
+                            {point.replace(/^[-•]\s*/, "")}
+                          </li>
+                        ))}
+                    </ul>
                   )}
                 </div>
               ))}
