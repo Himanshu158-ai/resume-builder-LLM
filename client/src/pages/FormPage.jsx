@@ -30,7 +30,7 @@ export default function FormPage() {
     setLoading(true);
     console.log(data);
     try {
-      const res = await axios.post("http://localhost:3000/api/generate", data);
+      const res = await axios.post("http://localhost:3000/api/resume/generate", data);
       navigate("/preview", { state: { resume: res.data } });
     } catch (err) {
       console.error(err);
