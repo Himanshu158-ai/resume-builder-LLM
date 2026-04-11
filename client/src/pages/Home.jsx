@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { Download } from "lucide-react"
+import { Download, Globe } from "lucide-react"
 
 export default function HomePage() {
     const navigate = useNavigate();
@@ -17,12 +17,12 @@ export default function HomePage() {
         return () => clearInterval(interval);
     }, []);
 
-    useEffect(()=>{
+    useEffect(() => {
         const color = setInterval(() => {
-            setColorIndex((prev)=>!prev);
+            setColorIndex((prev) => !prev);
         }, 2000);
         return () => clearInterval(color);
-    },[])
+    }, [])
 
     return (
         <div className="min-h-screen overflow-x-hidden bg-gradient-to-br from-blue-50 via-white to-indigo-50 relative">
@@ -54,8 +54,7 @@ px-4 py-1 rounded-full border text-sm">
                     </h1>
 
                     <p className="text-gray-600 mt-4 md:mt-5 text-base md:text-lg">
-                        Tell us about yourself and our AI will generate a professional,
-                        job-ready resume in seconds.
+                        Tell us about yourself. Our AI generates a professional, ATS-friendly resume based on your real achievements no fluff, no false claims.
                     </p>
 
                     <button
@@ -65,13 +64,13 @@ px-4 py-1 rounded-full border text-sm">
             shadow-lg hover:shadow-xl transition duration-300
             hover:scale-95"
                     >
-                        Create Your Resume
+                        Build Your Resume
                     </button>
 
                     {/* glass features */}
                     <div className="flex gap-4 md:gap-4 mt-6 md:mt-8 flex-wrap justify-center md:justify-start">
 
-  <div className="inline-flex items-center gap-2 
+                        <div className="inline-flex items-center gap-2 
 bg-gradient-to-t from-purple-500/5 to-transparent
 backdrop-blur-xl 
 border border-blue-200/40 
@@ -82,13 +81,13 @@ hover:bg-white/40
 hover:scale-105
 transition-all duration-300">
 
-    <span className="text-base md:text-lg">🤖</span>
-    <span className="font-medium text-gray-800 text-sm md:text-base">
-      ATS Friendly
-    </span>
-  </div>
+                            <Globe size={16} className="md:w-[18px] md:h-[18px]" />
+                            <span className="font-medium text-gray-800 text-sm md:text-base">
+                                ATS Friendly
+                            </span>
+                        </div>
 
-  <div className="inline-flex items-center gap-2 
+                        <div className="inline-flex items-center gap-2 
 bg-gradient-to-l from-blue-500/5 to-transparent
 backdrop-blur-xl 
 border border-blue-200/40 
@@ -99,19 +98,19 @@ hover:bg-white/40
 hover:scale-105
 transition-all duration-300">
 
-    <Download size={16} className="md:w-[18px] md:h-[18px]" />
-    <span className="font-medium text-gray-800 text-sm md:text-base">
-      Instant
-    </span>
-  </div>
+                            <Download size={16} className="md:w-[18px] md:h-[18px]" />
+                            <span className="font-medium text-gray-800 text-sm md:text-base">
+                                Instant
+                            </span>
+                        </div>
 
-</div>
+                    </div>
                 </div>
 
                 {/* RIGHT */}
                 <div className="relative overflow-hidden transition duration-300 md:hover:scale-[1.02] md:rotate-3 mt-0 md:mt-0 rotate-3">
 
-                    <div className="bg-white rounded-2xl shadow-2xl p-5 md:p-6">
+                    <div className="bg-white rounded-xl shadow-2xl p-4 md:p-6">
 
                         <div className="border-b pb-3">
                             <h2 className="text-lg md:text-xl font-bold">Himanshu~</h2>
@@ -141,10 +140,10 @@ transition-all duration-300">
                         </div>
                     </div>
 
-                    <div className="absolute -bottom-4 -left-2 md:-left-4 
+                    <div className="absolute -bottom-1 -left-2 md:-left-4 
 bg-white/40 backdrop-blur-lg border border-white/30
-shadow-2xl px-3 md:px-4 py-2 md:py-3 rounded-xl text-sm">
-                        ⚡ AI Generated
+shadow-2xl px-3 md:px-4 py-2 md:py-3 rounded-2xl text-sm">
+                        ⚡Agents
                     </div>
 
                 </div>

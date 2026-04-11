@@ -6,10 +6,11 @@ import Education from "../components/Education";
 import Skills from "../components/Skills";
 import Projects from "../components/Project";
 import Experience from "../components/Experience";
+import About from "../components/About";
 
 const defaultData = {
   personalInfo: { name: "", email: "", phone: "", location: "", linkedin: "", github: "" },
-  aboutMe: "",
+  aboutMe: [{about:"",target:""}],
   education: { college: "", degree: "", branch: "", year: "", cgpa: "" },
   skills: [],
   projects: [{ name: "", techStack: "", description: "" }],
@@ -17,7 +18,7 @@ const defaultData = {
   isFresher: false,
 };
 
-const steps = ["Personal info", "Education", "Skills", "Projects", "Experience"];
+const steps = ["Personal info","background", "Education", "Skills", "Projects", "Experience"];
 
 export default function FormPage() {
   const [current, setCurrent] = useState(0);
@@ -27,6 +28,7 @@ export default function FormPage() {
 
   const handleSubmit = async () => {
     setLoading(true);
+    console.log(data);
     try {
       const res = await axios.post("http://localhost:3000/api/generate", data);
       navigate("/preview", { state: { resume: res.data } });
@@ -39,6 +41,7 @@ export default function FormPage() {
 
   const sections = [
     <PersonalInfo data={data} setData={setData} />,
+    <About data={data} setData={setData} />,
     <Education data={data} setData={setData} />,
     <Skills data={data} setData={setData} />,
     <Projects data={data} setData={setData} />,
@@ -56,7 +59,7 @@ export default function FormPage() {
         </h1>
 
         <p className="text-gray-500 mb-8">
-          Describe yourself — AI will generate your professional resume
+          Describe yourself our agent builds your resume from your actual achievements
         </p>
 
         {/* progress */}

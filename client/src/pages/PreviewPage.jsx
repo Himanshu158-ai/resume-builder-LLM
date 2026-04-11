@@ -40,7 +40,7 @@ export default function PreviewPage() {
   const downloadPDF = async () => {
     if (!resumeRef.current) return;
     setDownloading(true);
-    
+
     // Save original styles to restore later
     const element = resumeRef.current;
     const originalWidth = element.style.width;
@@ -53,7 +53,7 @@ export default function PreviewPage() {
       // This prevents mobile responsive styles from breaking the layout
       element.style.width = "794px";
       element.style.maxWidth = "none";
-      element.style.padding = "56px 64px"; 
+      element.style.padding = "56px 64px";
       element.style.boxShadow = "none";
 
       const canvas = await html2canvas(element, {
@@ -66,13 +66,13 @@ export default function PreviewPage() {
 
       const imgData = canvas.toDataURL("image/png");
       const pdf = new jsPDF("p", "mm", "a4");
-      
+
       const pdfWidth = pdf.internal.pageSize.getWidth();
       const pdfHeight = pdf.internal.pageSize.getHeight();
-      
+
       const imgWidth = pdfWidth;
       const imgHeight = (canvas.height * imgWidth) / canvas.width;
-      
+
       let heightLeft = imgHeight;
       let position = 0;
 
@@ -176,13 +176,23 @@ export default function PreviewPage() {
               <SectionTitle>Professional Summary</SectionTitle>
               {isEditing ? (
                 <textarea
-                  value={aboutMe}
-                  onChange={(e) => setEditedResume({ ...editedResume, aboutMe: e.target.value })}
+                  value={aboutMe[0]?.about || ""}
+                  onChange={(e) =>
+                    setEditedResume({
+                      ...editedResume,
+                      aboutMe: [
+                        {
+                          ...aboutMe[0],
+                          about: e.target.value
+                        }
+                      ]
+                    })
+                  }
                   className="w-full text-[13px] p-2 border border-gray-300 rounded resize-y min-h-[80px] font-serif"
                 />
               ) : (
                 <p className="text-[13px] leading-relaxed text-gray-800 m-0">
-                  {aboutMe}
+                  {aboutMe[0]?.about}
                 </p>
               )}
             </div>

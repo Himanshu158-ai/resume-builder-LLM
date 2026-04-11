@@ -12,7 +12,10 @@ const state = new StateSchema({
     github: z.string().default(""),
   }),
 
-  aboutMe: z.string().default(""),//cohere
+  aboutMe: z.array(z.object({
+    about: z.string().default(""),
+    target: z.string().default(""),
+  })).default([]), //cohere
 
   education: z.object({
     college: z.string().default(""),
@@ -55,16 +58,27 @@ Your task is to craft a razor-sharp, ATS-optimized Professional Summary that mak
 
 CANDIDATE PROFILE:
 Name: ${personalInfo.name}
-About (raw input): ${aboutMe}
+About (raw input): ${aboutMe.map(a => a.about).join(", ")}
+Target Role: ${aboutMe.map(a => a.target).join(", ")}
 Education: ${JSON.stringify(education)}
 Skills: ${skills.join(", ")}
 Projects: ${JSON.stringify(projects)}
 ${!isFresher ? `Experience: ${JSON.stringify(experience)}` : "Candidate is a Fresher — focus on projects, skills, and academic excellence"}
 
+CORE INSTRUCTION:
+- If Target Role is provided → tailor the summary toward that role
+- Align skills, projects, and experience with the Target Role
+- Emphasize only relevant technologies for that role
+- Naturally include role-specific keywords for ATS
+- DO NOT rely only on target role — use actual skills, projects, and experience
+- If Target Role is empty → generate a strong general professional summary based on skills, projects, and experience (current behavior)
+
 WRITING RULES:
 - 3-4 lines MAXIMUM — tight, punchy, no filler
 - Third person professional tone (no I, me, my)
-- Open with a strong role identity (e.g. "Full Stack MERN Developer with...")
+- If Target Role exists → open with that role identity
+  Example: "Frontend Developer...", "Backend Java Developer..."
+- If Target Role missing → infer best role from skills/projects
 - Naturally weave in: ${skills.join(", ")}
 - Mention 1-2 standout projects or achievements with impact
 - If fresher → highlight academic excellence + project depth + tech stack strength
@@ -72,9 +86,10 @@ WRITING RULES:
 - End with value proposition (what they bring to the team)
 
 ATS RULES:
-- Include high-value keywords: ${skills.join(", ")}
+- If Target Role exists → include role-specific keywords for that job
+- Also include high-value keywords from: ${skills.join(", ")}
 - Use action-driven, results-oriented language
-- Include domain terms (full stack, backend, frontend, scalable, REST API etc.)
+- Include domain terms (scalable, REST API, frontend, backend, etc.)
 - No buzzwords (passionate, hardworking, team player)
 - No bullet points, no headings, no markdown
 - if ${education.cgpa} like less than 7.5 or 7 ignore it
@@ -93,7 +108,7 @@ Nothing else — no explanation, no label, no preamble.
 
   return {
     ...state,
-    aboutMe: content.trim()
+    aboutMe: [{about:content.trim(),target:state.aboutMe[0].target}]
   };
 };
 
@@ -243,7 +258,7 @@ REVIEW CHECKLIST:
 INPUT DATA:
 
 PROFESSIONAL SUMMARY:
-${aboutMe}
+${JSON.stringify(aboutMe)}
 
 EXPERIENCE:
 ${JSON.stringify(experience)}
@@ -318,7 +333,9 @@ Return ONLY this valid JSON — no explanation, no preamble, no markdown:
 
   return {
     ...state,
-    aboutMe: parsed.about ?? state.aboutMe,
+    aboutMe: parsed.about
+      ? [{ about: parsed.about, target: state.aboutMe[0]?.target || "" }]
+      : state.aboutMe,
     experience: parsed.experience ?? state.experience,
     projects: parsed.projects ?? state.projects,
     suggestions: parsed.suggestions ?? [],
@@ -361,10 +378,10 @@ export default async function runResumeAgent(userData: any) {
 
     console.log("Resume Graph Execution Completed!");
     console.log("Execution time:", Date.now() - start, "ms");
-    console.log("Final Graph");
+    console.log("Final Graph",result);
 
     return {
-      aboutMe: result.aboutMe || userData.aboutMe || "",
+      aboutMe: result.aboutMe || userData.aboutMe || [{about:"",target:""}],
       experience: result.experience || userData.experience || [],
       projects: result.projects || userData.projects || [],
       suggestions: result.suggestions || userData.suggestions || [],

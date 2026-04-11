@@ -93,24 +93,6 @@ export default function PersonalInfo({ data, setData }) {
 
       </div>
 
-      <div className="flex flex-col gap-1">
-        <label className="text-sm font-medium text-gray-700">
-          About me
-        </label>
-
-        <textarea
-          className={`${inputStyle} min-h-[90px]`}
-          value={data.aboutMe}
-          onChange={e =>
-            setData(prev => ({
-              ...prev,
-              aboutMe: e.target.value
-            }))
-          }
-          placeholder="Brief intro about yourself..."
-        />
-      </div>
-
     </div>
   );
 }
