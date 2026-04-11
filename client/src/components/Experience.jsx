@@ -10,57 +10,133 @@ export default function Experience({ data, setData }) {
   const addExp = () => {
     setData(prev => ({
       ...prev,
-      experience: [...prev.experience, { company: "", role: "", duration: "", description: "" }]
+      experience: [
+        ...prev.experience,
+        { company: "", role: "", duration: "", description: "" }
+      ]
     }));
   };
 
   const removeExp = (i) => {
-    setData(prev => ({ ...prev, experience: prev.experience.filter((_, idx) => idx !== i) }));
+    setData(prev => ({
+      ...prev,
+      experience: prev.experience.filter((_, idx) => idx !== i)
+    }));
   };
 
+  const inputStyle =
+    "w-full px-3 py-2.5 rounded-lg " +
+    "bg-white/80 backdrop-blur-md " +
+    "border border-gray-200 " +
+    "text-gray-800 placeholder-gray-400 " +
+    "focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent " +
+    "transition";
+
   return (
-    <div className="space-y-4">
-      <div className="flex items-center gap-2">
+    <div className="space-y-5">
+
+      {/* fresher checkbox */}
+      <label className="flex items-center gap-2 text-sm text-gray-700">
         <input
           type="checkbox"
-          id="fresher"
+          className="accent-blue-600"
           checked={data.isFresher}
-          onChange={e => setData(prev => ({ ...prev, isFresher: e.target.checked }))}
+          onChange={e =>
+            setData(prev => ({ ...prev, isFresher: e.target.checked }))
+          }
         />
-        <label htmlFor="fresher" className="text-sm text-gray-600 dark:text-gray-300">I am a fresher (no experience)</label>
-      </div>
+        I am a fresher (no experience)
+      </label>
 
       {!data.isFresher && (
         <>
           {data.experience.map((exp, i) => (
-            <div key={i} className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 space-y-3">
+            <div
+              key={i}
+              className="bg-white/40 backdrop-blur-xl 
+              border border-white/40 
+              rounded-xl p-5 space-y-4"
+            >
               <div className="flex justify-between items-center">
-                <span className="text-sm font-medium text-gray-500 dark:text-gray-400">Experience {i + 1}</span>
+                <span className="text-sm font-medium text-gray-600">
+                  Experience {i + 1}
+                </span>
+
                 {data.experience.length > 1 && (
-                  <button onClick={() => removeExp(i)} className="text-xs text-red-500">Remove</button>
+                  <button
+                    onClick={() => removeExp(i)}
+                    className="text-xs text-red-500 hover:text-red-600"
+                  >
+                    Remove
+                  </button>
                 )}
               </div>
-              <div className="grid grid-cols-2 gap-3">
+
+              <div className="grid md:grid-cols-2 gap-3">
+
                 <div className="flex flex-col gap-1">
-                  <label className="text-sm text-gray-500 dark:text-gray-400">Company</label>
-                  <input className="input" value={exp.company} onChange={e => update(i, "company", e.target.value)} placeholder="Google" />
+                  <label className="text-sm font-medium text-gray-700">
+                    Company
+                  </label>
+                  <input
+                    className={inputStyle}
+                    value={exp.company}
+                    onChange={e => update(i, "company", e.target.value)}
+                    placeholder="Google"
+                  />
                 </div>
+
                 <div className="flex flex-col gap-1">
-                  <label className="text-sm text-gray-500 dark:text-gray-400">Role</label>
-                  <input className="input" value={exp.role} onChange={e => update(i, "role", e.target.value)} placeholder="Frontend Developer" />
+                  <label className="text-sm font-medium text-gray-700">
+                    Role
+                  </label>
+                  <input
+                    className={inputStyle}
+                    value={exp.role}
+                    onChange={e => update(i, "role", e.target.value)}
+                    placeholder="Frontend Developer"
+                  />
                 </div>
-                <div className="flex flex-col gap-1">
-                  <label className="text-sm text-gray-500 dark:text-gray-400">Duration</label>
-                  <input className="input" value={exp.duration} onChange={e => update(i, "duration", e.target.value)} placeholder="Jan 2023 - Dec 2023" />
+
+                <div className="flex flex-col gap-1 md:col-span-2">
+                  <label className="text-sm font-medium text-gray-700">
+                    Duration
+                  </label>
+                  <input
+                    className={inputStyle}
+                    value={exp.duration}
+                    onChange={e => update(i, "duration", e.target.value)}
+                    placeholder="Jan 2023 - Dec 2023"
+                  />
                 </div>
+
               </div>
+
               <div className="flex flex-col gap-1">
-                <label className="text-sm text-gray-500 dark:text-gray-400">What you did</label>
-                <textarea className="input min-h-[70px]" value={exp.description} onChange={e => update(i, "description", e.target.value)} placeholder="Describe your work..." />
+                <label className="text-sm font-medium text-gray-700">
+                  What you did
+                </label>
+                <textarea
+                  className={`${inputStyle} min-h-[80px]`}
+                  value={exp.description}
+                  onChange={e => update(i, "description", e.target.value)}
+                  placeholder="Describe your work..."
+                />
               </div>
             </div>
           ))}
-          <button onClick={addExp} className="text-sm border border-gray-300 dark:border-gray-600 dark:text-gray-200 rounded-lg px-4 py-2 hover:bg-gray-50 dark:hover:bg-gray-800 transition">
+
+          {/* add button */}
+          <button
+            onClick={addExp}
+            className="bg-white/40 backdrop-blur-lg 
+            border border-white/40 
+            px-4 py-2 
+            rounded-lg 
+            text-sm 
+            hover:bg-white/60 
+            transition"
+          >
             + Add experience
           </button>
         </>

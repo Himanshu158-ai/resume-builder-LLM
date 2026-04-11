@@ -46,42 +46,105 @@ export default function FormPage() {
   ];
 
   return (
-    <div className="max-w-2xl mx-auto px-4 py-10">
-      <h1 className="text-2xl font-medium mb-1 dark:text-white">Build your resume</h1>
-      <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">Fill in your details — AI will generate your professional resume</p>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 py-16 px-4">
 
-      {/* Progress bar */}
-      <div className="flex gap-2 mb-8">
-        {steps.map((_, i) => (
-          <div key={i} className={`h-1 flex-1 rounded-full transition-all duration-300 ${i < current ? "bg-green-500" : i === current ? "bg-blue-500" : "bg-gray-200 dark:bg-gray-700"}`} />
-        ))}
-      </div>
+      <div className="max-w-2xl mx-auto">
 
-      {/* Section card */}
-      <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-6 mb-6 shadow-sm">
-        <p className="text-xs uppercase tracking-widest text-gray-400 dark:text-gray-500 font-medium mb-5">{steps[current]}</p>
-        {sections[current]}
-      </div>
+        {/* heading */}
+        <h1 className="text-3xl font-semibold mb-2 text-gray-800">
+          Build your resume
+        </h1>
 
-      {/* Navigation */}
-      <div className="flex justify-between items-center">
-        <button
-          onClick={() => setCurrent(c => c - 1)}
-          className={`px-5 py-2 text-sm border border-gray-300 dark:border-gray-600 dark:text-gray-200 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition ${current === 0 ? "invisible" : ""}`}
-        >
-          Back
-        </button>
-        <span className="text-sm text-gray-400 dark:text-gray-500">Step {current + 1} of {steps.length}</span>
-        {current < steps.length - 1 ? (
-          <button onClick={() => setCurrent(c => c + 1)} className="px-5 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700">
-            Next
+        <p className="text-gray-500 mb-8">
+          Describe yourself — AI will generate your professional resume
+        </p>
+
+        {/* progress */}
+        <div className="flex gap-2 mb-8">
+          {steps.map((_, i) => (
+            <div
+              key={i}
+              className={`h-2 flex-1 rounded-full transition-all duration-300 
+              ${i < current
+                  ? "bg-gradient-to-r from-blue-500 to-indigo-500"
+                  : i === current
+                    ? "bg-blue-400"
+                    : "bg-gray-200"
+                }`}
+            />
+          ))}
+        </div>
+
+        {/* glass card */}
+        <div className="bg-white/40 backdrop-blur-xl 
+        border border-white/40 
+        rounded-2xl 
+        p-7 
+        shadow-[0_8px_30px_rgba(0,0,0,0.08)]
+        mb-6">
+
+          <p className="text-xs uppercase tracking-widest 
+          text-gray-400 font-medium mb-5">
+            {steps[current]}
+          </p>
+
+          {sections[current]}
+        </div>
+
+        {/* navigation */}
+        <div className="flex justify-between items-center">
+
+          <button
+            onClick={() => setCurrent(c => c - 1)}
+            className={`px-5 py-2 text-sm 
+            bg-white/40 backdrop-blur-lg
+            border border-white/40 
+            rounded-lg 
+            hover:bg-white/60 
+            transition
+            ${current === 0 ? "invisible" : ""}`}
+          >
+            Back
           </button>
-        ) : (
-          <button onClick={handleSubmit} disabled={loading} className="px-5 py-2 text-sm bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50">
-            {loading ? "Generating..." : "Generate resume"}
-          </button>
-        )}
+
+          <span className="text-sm text-gray-400">
+            Step {current + 1} of {steps.length}
+          </span>
+
+          {current < steps.length - 1 ? (
+            <button
+              onClick={() => setCurrent(c => c + 1)}
+              className="px-6 py-2 text-sm 
+              bg-gradient-to-r from-blue-600 to-indigo-600
+              text-white 
+              rounded-lg 
+              shadow-lg 
+              hover:scale-105 
+              transition"
+            >
+              Next
+            </button>
+          ) : (
+            <button
+              onClick={handleSubmit}
+              disabled={loading}
+              className="px-6 py-2 text-sm 
+              bg-gradient-to-r from-green-500 to-emerald-600
+              text-white 
+              rounded-lg 
+              shadow-lg 
+              hover:scale-105 
+              transition 
+              disabled:opacity-50"
+            >
+              {loading ? "Generating..." : "Generate Resume"}
+            </button>
+          )}
+
+        </div>
+
       </div>
+
     </div>
   );
 }
