@@ -8,6 +8,7 @@ import Projects from "../components/Project";
 import Experience from "../components/Experience";
 import About from "../components/About";
 import { toast } from "react-toastify";
+const API_URL = import.meta.env.VITE_API_URL
 
 const defaultData = {
   personalInfo: { name: "", email: "", phone: "", location: "", linkedin: "", github: "" },
@@ -31,7 +32,7 @@ export default function FormPage() {
     setLoading(true);
     console.log(data);
     try {
-      const res = await axios.post("http://localhost:3000/api/resume/generate", data);
+      const res = await axios.post(API_URL+"/api/resume/generate", data);
       toast.success(res.data.message || "Resume generated successfully!");
       navigate("/preview", { state: { resume: res.data } });
     } catch (err) {

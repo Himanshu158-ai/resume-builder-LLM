@@ -39,7 +39,7 @@ export default async function runResumeAgent(userData: any) {
 
     console.log("Resume Graph Execution Completed!");
     console.log("Execution time:", Date.now() - start, "ms");
-    console.log("Final Graph",result);
+    console.log("Final Graph");
 
     return {
       aboutMe: result.aboutMe || userData.aboutMe || [{about:"",target:""}],

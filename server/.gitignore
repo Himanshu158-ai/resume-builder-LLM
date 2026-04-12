@@ -6,3 +6,4 @@ build/
 uploads/
 coverage/
 .vscode/
+.env.local
