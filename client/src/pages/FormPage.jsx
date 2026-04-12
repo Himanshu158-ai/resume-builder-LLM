@@ -7,6 +7,7 @@ import Skills from "../components/Skills";
 import Projects from "../components/Project";
 import Experience from "../components/Experience";
 import About from "../components/About";
+import { toast } from "react-toastify";
 
 const defaultData = {
   personalInfo: { name: "", email: "", phone: "", location: "", linkedin: "", github: "" },
@@ -31,9 +32,11 @@ export default function FormPage() {
     console.log(data);
     try {
       const res = await axios.post("http://localhost:3000/api/resume/generate", data);
+      toast.success(res.data.message || "Resume generated successfully!");
       navigate("/preview", { state: { resume: res.data } });
     } catch (err) {
-      console.error(err);
+      console.log(err);
+      toast.error(err.response?.data?.message || err.message || "An error occurred.");
     } finally {
       setLoading(false);
     }

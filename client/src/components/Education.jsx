@@ -22,6 +22,7 @@ export default function Education({ data, setData }) {
           College / University
         </label>
         <input
+          required
           className={inputStyle}
           value={data.education.college}
           onChange={e => update("college", e.target.value)}
@@ -34,6 +35,7 @@ export default function Education({ data, setData }) {
           Degree
         </label>
         <input
+          required
           className={inputStyle}
           value={data.education.degree}
           onChange={e => update("degree", e.target.value)}
@@ -46,6 +48,7 @@ export default function Education({ data, setData }) {
           Branch
         </label>
         <input
+          required
           className={inputStyle}
           value={data.education.branch}
           onChange={e => update("branch", e.target.value)}
@@ -58,6 +61,7 @@ export default function Education({ data, setData }) {
           Year
         </label>
         <input
+          required
           className={inputStyle}
           value={data.education.year}
           onChange={e => update("year", e.target.value)}

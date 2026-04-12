@@ -65,6 +65,7 @@ export default function Projects({ data, setData }) {
                 Project name
               </label>
               <input
+                required
                 className={inputStyle}
                 value={p.name}
                 onChange={e => update(i, "name", e.target.value)}
@@ -77,6 +78,7 @@ export default function Projects({ data, setData }) {
                 Tech stack
               </label>
               <input
+                required
                 className={inputStyle}
                 value={p.techStack}
                 onChange={e => update(i, "techStack", e.target.value)}
@@ -92,6 +94,7 @@ export default function Projects({ data, setData }) {
             </label>
 
             <textarea
+              required
               className={`${inputStyle} min-h-[80px]`}
               value={p.description}
               onChange={e => update(i, "description", e.target.value)}

@@ -37,6 +37,7 @@ export default function Skills({ data, setData }) {
 
       <div className="flex gap-2">
         <input
+          required
           className={`${inputStyle} flex-1`}
           value={input}
           onChange={e => setInput(e.target.value)}

@@ -24,6 +24,7 @@ export default function PersonalInfo({ data, setData }) {
             Full name
           </label>
           <input
+            required
             className={inputStyle}
             value={data.personalInfo.name}
             onChange={e => update("name", e.target.value)}
@@ -36,6 +37,7 @@ export default function PersonalInfo({ data, setData }) {
             Email
           </label>
           <input
+            required
             className={inputStyle}
             value={data.personalInfo.email}
             onChange={e => update("email", e.target.value)}
@@ -48,6 +50,7 @@ export default function PersonalInfo({ data, setData }) {
             Phone
           </label>
           <input
+            required
             className={inputStyle}
             value={data.personalInfo.phone}
             onChange={e => update("phone", e.target.value)}
@@ -60,6 +63,7 @@ export default function PersonalInfo({ data, setData }) {
             Location
           </label>
           <input
+            required
             className={inputStyle}
             value={data.personalInfo.location}
             onChange={e => update("location", e.target.value)}
@@ -72,6 +76,7 @@ export default function PersonalInfo({ data, setData }) {
             LinkedIn
           </label>
           <input
+            required
             className={inputStyle}
             value={data.personalInfo.linkedin}
             onChange={e => update("linkedin", e.target.value)}
@@ -84,6 +89,7 @@ export default function PersonalInfo({ data, setData }) {
             GitHub
           </label>
           <input
+            required
             className={inputStyle}
             value={data.personalInfo.github}
             onChange={e => update("github", e.target.value)}

@@ -38,6 +38,7 @@ export default function Experience({ data, setData }) {
       {/* fresher checkbox */}
       <label className="flex items-center gap-2 text-sm text-gray-700">
         <input
+          required
           type="checkbox"
           className="accent-blue-600"
           checked={data.isFresher}
@@ -79,6 +80,7 @@ export default function Experience({ data, setData }) {
                     Company
                   </label>
                   <input
+                    required
                     className={inputStyle}
                     value={exp.company}
                     onChange={e => update(i, "company", e.target.value)}
@@ -91,6 +93,7 @@ export default function Experience({ data, setData }) {
                     Role
                   </label>
                   <input
+                    required
                     className={inputStyle}
                     value={exp.role}
                     onChange={e => update(i, "role", e.target.value)}
@@ -103,6 +106,7 @@ export default function Experience({ data, setData }) {
                     Duration
                   </label>
                   <input
+                    required
                     className={inputStyle}
                     value={exp.duration}
                     onChange={e => update(i, "duration", e.target.value)}
@@ -117,6 +121,7 @@ export default function Experience({ data, setData }) {
                   What you did
                 </label>
                 <textarea
+                  required
                   className={`${inputStyle} min-h-[80px]`}
                   value={exp.description}
                   onChange={e => update(i, "description", e.target.value)}
