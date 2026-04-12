@@ -5,7 +5,7 @@ import { Download, Globe } from "lucide-react"
 export default function HomePage() {
     const navigate = useNavigate();
 
-    const words = ["Professional", "ATS Friendly", "Modern", "AI Generated"];
+    const words = ["Professional", "ATS Friendly", "Modernnn", "AI Generated"];
     const [index, setIndex] = useState(0);
     const [colorIndex, setColorIndex] = useState(true);
 
@@ -26,7 +26,6 @@ export default function HomePage() {
 
     return (
         <div className="min-h-screen overflow-x-hidden bg-gradient-to-br from-blue-50 via-white to-indigo-50 relative">
-
             {/* glow background */}
             <div className="absolute top-0 left-0 w-40 md:w-60 h-40 md:h-60 bg-blue-300 opacity-20 blur-3xl rounded-full"></div>
             <div className="absolute bottom-0 right-0 w-40 md:w-60 h-40 md:h-60 bg-indigo-300 opacity-20 blur-3xl rounded-full"></div>
@@ -39,7 +38,7 @@ export default function HomePage() {
 bg-white/60 backdrop-blur-lg 
 px-4 py-1 rounded-full border text-sm">
 
-                        <span className={`w-2 h-2 ${colorIndex ? "bg-blue-600" : "bg-red-600"} rounded-full`}></span>
+                        <span className={`w-2 h-2 ${colorIndex ? "bg-blue-600" : "bg-green-600"} rounded-full`}></span>
 
                         AI Resume Builder
                     </div>
@@ -108,7 +107,7 @@ transition-all duration-300">
                 </div>
 
                 {/* RIGHT */}
-                <div className="relative overflow-hidden transition duration-300 md:hover:scale-[1.02] md:rotate-3 mt-0 md:mt-0 rotate-3">
+                <div className="relative overflow-hidden transition duration-300 md:hover:scale-[1.02] md:rotate-3 mt-6 md:mt-2 rotate-4">
 
                     <div className="bg-white rounded-xl shadow-2xl p-4 md:p-6">
 
@@ -140,7 +139,7 @@ transition-all duration-300">
                         </div>
                     </div>
 
-                    <div className="absolute -bottom-1 -left-2 md:-left-4 
+                    <div className="absolute -bottom-0 -left-1 md:-left-2 
 bg-white/40 backdrop-blur-lg border border-white/30
 shadow-2xl px-3 md:px-4 py-2 md:py-3 rounded-2xl text-sm">
                         ⚡Agents

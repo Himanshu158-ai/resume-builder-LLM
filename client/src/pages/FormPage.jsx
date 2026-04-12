@@ -9,6 +9,7 @@ import Experience from "../components/Experience";
 import About from "../components/About";
 import { toast } from "react-toastify";
 const API_URL = import.meta.env.VITE_API_URL
+import Loader from "../components/Loader";
 
 const defaultData = {
   personalInfo: { name: "", email: "", phone: "", location: "", linkedin: "", github: "" },
@@ -54,8 +55,8 @@ export default function FormPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 py-16 px-4">
-
-      <div className="max-w-2xl mx-auto">
+      {loading?(<Loader/>):(
+        <div className="max-w-2xl mx-auto">
 
         {/* heading */}
         <h1 className="text-3xl font-semibold mb-2 text-gray-800">
@@ -151,6 +152,8 @@ export default function FormPage() {
         </div>
 
       </div>
+      )}
+      
 
     </div>
   );
