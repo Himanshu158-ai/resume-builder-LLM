@@ -2,6 +2,7 @@ import express from "express";
 import { config } from "./config/config";
 import ResumeRoute from "./routes/ResumeRoute";
 import cors from "cors";
+import { Request, Response } from "express";
 
 
 const app = express();
@@ -15,7 +16,7 @@ app.use(cors({
 // app.post("/api/resume",ResumeRoute);
 app.use("/api/resume",ResumeRoute);
 
-app.get("/",(req,res)=>{
+app.get("/",(req:Request,res:Response)=>{
     res.send("Server is running");
 });
 
