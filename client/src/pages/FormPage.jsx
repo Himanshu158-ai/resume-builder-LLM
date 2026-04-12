@@ -32,7 +32,7 @@ export default function FormPage() {
     setLoading(true);
     console.log(data);
     try {
-      const res = await axios.post(API_URL+"/api/resume/generate", data);
+      const res = await axios.post(API_URL+"/api/resume/generate", data,{withCredentials:true});
       toast.success(res.data.message || "Resume generated successfully!");
       navigate("/preview", { state: { resume: res.data } });
     } catch (err) {
