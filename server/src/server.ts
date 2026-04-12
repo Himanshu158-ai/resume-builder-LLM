@@ -1,4 +1,4 @@
-import express from "express";
+import express, { Request, Response } from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import ResumeRoute from "./routes/ResumeRoute";
@@ -31,11 +31,11 @@ app.use(cors({
 app.use("/api/resume", ResumeRoute);
 
 // 👇 health route bhi add kar de
-app.get("/", (req, res) => {
+app.get("/", (req:Request, res:Response) => {
   res.send("Server is running ✅");
 });
 
-app.get("/health", (req, res) => {
+app.get("/health", (req:Request, res:Response) => {
   res.send("OK");
 });
 
