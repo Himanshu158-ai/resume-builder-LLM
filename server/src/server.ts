@@ -7,16 +7,29 @@ import { Request, Response } from "express";
 
 const app = express();
 app.use(express.json());
+
+const allowedOrigins =
+    process.env.NODE_ENV === "production"
+        ? [process.env.CLIENT_URL]
+        : ["http://localhost:5173", "http://127.0.0.1:5173"]
+
 app.use(cors({
-    origin: config.clientUrl,
+    origin: (origin, callback) => {
+        if (!origin) return callback(null, true)
+
+        if (allowedOrigins.includes(origin)) {
+            callback(null, true)
+        } else {
+            callback(new Error("Not allowed by CORS"))
+        }
+    },
     credentials: true
-}));
+}))
 
 
-// app.post("/api/resume",ResumeRoute);
-app.use("/api/resume",ResumeRoute);
+app.use("/api/resume", ResumeRoute);
 
-app.get("/",(req:Request,res:Response)=>{
+app.get("/", (req: Request, res: Response) => {
     res.send("Server is running");
 });
 
