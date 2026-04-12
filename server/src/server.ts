@@ -11,8 +11,13 @@ app.use(cors({
     credentials: true
 }));
 
+
 // app.post("/api/resume",ResumeRoute);
 app.use("/api/resume",ResumeRoute);
+
+app.get("/",(req,res)=>{
+    res.send("Server is running");
+});
 
 app.listen(config.port, () => {
     console.log(`Server is running on port ${config.port}`);
