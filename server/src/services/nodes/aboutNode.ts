@@ -60,7 +60,6 @@ Nothing else — no explanation, no label, no preamble.
       ? response.content
       : response.content.map(c => ("text" in c ? c.text : "")).join("");
 
-  // ✅ CORRECT - sirf changed field return karo
   return {
     aboutMe: [{ about: content.trim(), target: state.aboutMe[0].target }]
   };
