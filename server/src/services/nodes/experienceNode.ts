@@ -9,35 +9,62 @@ export const GenExperienceNode: GraphNode<typeof state> = async (state) => {
   const enhancedExperience = [];
 
   for (const exp of experience) {
-    const prompt = `
-You are an expert ATS resume writer and career coach.
+    //     const prompt = `
+    // You are an expert ATS resume writer and career coach.
 
-Your job is to convert raw work experience into powerful, ATS-optimized bullet points that get interviews.
+    // Your job is to convert raw work experience into powerful, ATS-optimized bullet points that get interviews.
 
-Role: ${exp.role}
-Company: ${exp.company}  
-Duration: ${exp.duration}
-Raw Description: ${exp.description}
-Relevant Skills: ${skills.join(", ")}
+    // Role: ${exp.role}
+    // Company: ${exp.company}  
+    // Duration: ${exp.duration}
+    // Raw Description: ${exp.description}
+    // Relevant Skills: ${skills.join(", ")}
 
-INSTRUCTIONS:
-- Write exactly 3-4 bullet points
-- Keep each bullet point concise — maximum 15-20 words per bullet
-- Each bullet MUST start with a strong action verb (Built, Engineered, Optimized, Developed, Implemented, Reduced, Increased, Designed, Architected, Led)
-- MUST include at least 1-2 quantified metrics (%, ms, x faster, users, hours saved) — if user didn't mention numbers, intelligently estimate realistic ones based on the role
-- Naturally include relevant skills from the skills list
-- Be specific, not generic — reflect what the user actually did
-- ATS-friendly keywords included
-- No soft skills, no fluff, no headings, no preamble
+    // INSTRUCTIONS:
+    // - Write exactly 3-4 bullet points
+    // - Keep each bullet point concise — maximum 15-20 words per bullet
+    // - Each bullet MUST start with a strong action verb (Built, Engineered, Optimized, Developed, Implemented, Reduced, Increased, Designed, Architected, Led)
+    // - MUST include at least 1-2 quantified metrics (%, ms, x faster, users, hours saved) — if user didn't mention numbers, intelligently estimate realistic ones based on the role
+    // - Naturally include relevant skills from the skills list
+    // - Be specific, not generic — reflect what the user actually did
+    // - ATS-friendly keywords included
+    // - No soft skills, no fluff, no headings, no preamble
 
-OUTPUT FORMAT:
-Return ONLY a valid JSON array of strings. No markdown, no explanation.
-Example: ["Built REST APIs...", "Optimized MongoDB queries..."]
+    // OUTPUT FORMAT:
+    // Return ONLY a valid JSON array of strings. No markdown, no explanation.
+    // Example: ["Built REST APIs...", "Optimized MongoDB queries..."]
 
-STRICTLY return only the JSON array, nothing else.
+    // STRICTLY return only the JSON array, nothing else.
+    // `;
+
+    const systemPrompt = `
+Write 3-4 ATS-friendly resume bullets.
+
+- Start with strong action verbs
+- Include metrics (use realistic estimates if missing)
+- Use relevant skills
+- Be specific to the work described
+- No fluff
+
+Return JSON array only.
 `;
 
-    const res = await cohereChat.invoke(prompt);
+    const userPrompt = `
+Role: ${exp.role}
+Company: ${exp.company}
+Duration: ${exp.duration}
+
+Work:
+${exp.description.slice(0, 150)}
+
+Skills:
+${skills.slice(0, 10).join(", ")}
+`;
+
+    const res = await cohereChat.invoke([
+      { role: "system", content: systemPrompt },
+      { role: "user", content: userPrompt }
+    ]);
 
     const content =
       typeof res.content === "string"

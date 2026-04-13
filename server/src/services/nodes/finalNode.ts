@@ -5,73 +5,125 @@ import { mistralChat } from "../../models/llm.models";
 export const FinalNode: GraphNode<typeof state> = async (state) => {
   const { aboutMe, experience, projects, skills } = state;
 
-const prompt = `
-You are a world-class ATS resume reviewer and career coach.
+  // const prompt = `
+  // You are a world-class ATS resume reviewer and career coach.
 
-Your task is to do a FINAL quality check and improvement pass on this resume.
+  // Your task is to do a FINAL quality check and improvement pass on this resume.
 
-REVIEW CHECKLIST:
-1. Fix grammar, clarity, and professional tone
-2. Strengthen weak bullet points with better action verbs
-3. Add missing ATS keywords naturally
-4. Ensure quantified metrics exist in bullet points
-5. Generate actionable suggestions for candidate improvement
+  // REVIEW CHECKLIST:
+  // 1. Fix grammar, clarity, and professional tone
+  // 2. Strengthen weak bullet points with better action verbs
+  // 3. Add missing ATS keywords naturally
+  // 4. Ensure quantified metrics exist in bullet points
+  // 5. Generate actionable suggestions for candidate improvement
 
-INPUT DATA:
+  // INPUT DATA:
 
-PROFESSIONAL SUMMARY:
-${JSON.stringify(aboutMe)}
+  // PROFESSIONAL SUMMARY:
+  // ${JSON.stringify(aboutMe)}
 
-EXPERIENCE:
-${JSON.stringify(experience)}
+  // EXPERIENCE:
+  // ${JSON.stringify(experience)}
 
-PROJECTS:
-${JSON.stringify(projects)}
+  // PROJECTS:
+  // ${JSON.stringify(projects)}
 
-SKILLS:
-${skills.join(", ")}
+  // SKILLS:
+  // ${skills.join(", ")}
 
-STRICT RULES:
-- DO NOT invent fake experience, projects, or education
-- DO NOT change personal info (name, email, phone, college, CGPA)
-- DO NOT use markdown, asterisks (**), or bold formatting
-- Keep points[] as array of strings — same structure as input
-- Each bullet point must start with strong action verb
-- At least 1-2 metrics per experience/project bullet
-- Professional tone throughout
+  // STRICT RULES:
+  // - DO NOT invent fake experience, projects, or education
+  // - DO NOT change personal info (name, email, phone, college, CGPA)
+  // - DO NOT use markdown, asterisks (**), or bold formatting
+  // - Keep points[] as array of strings — same structure as input
+  // - Each bullet point must start with strong action verb
+  // - At least 1-2 metrics per experience/project bullet
+  // - Professional tone throughout
 
-OUTPUT FORMAT:
-Return ONLY this valid JSON — no explanation, no preamble, no markdown:
+  // OUTPUT FORMAT:
+  // Return ONLY this valid JSON — no explanation, no preamble, no markdown:
 
+  // {
+  //   "about": "improved professional summary string",
+  //   "experience": [
+  //     {
+  //       "company": "same as input",
+  //       "role": "same as input",
+  //       "duration": "same as input",
+  //       "description": "same as input",
+  //       "points": ["improved bullet 1", "improved bullet 2", "improved bullet 3"]
+  //     }
+  //   ],
+  //   "projects": [
+  //     {
+  //       "name": "inhanced name",
+  //       "techStack": "dame but proper formating",
+  //       "description": "same as input",
+  //       "points": ["improved bullet 1", "improved bullet 2", "improved bullet 3"]
+  //     }
+  //   ],
+  //   "suggestions": [
+  //     "Actionable tip 1",
+  //     "Actionable tip 2",
+  //     "Actionable tip 3"
+  //   ],
+  //   "finalReview": "8.5"
+  // }
+  // `;
+
+
+  const systemPrompt = `
+You are an ATS resume reviewer.
+
+Improve the resume:
+- Fix grammar & clarity
+- Strengthen bullets (action verbs + metrics)
+- Add relevant keywords naturally
+- Keep content truthful (no fake info)
+
+Rules:
+- Keep structure same
+- Do not change personal details
+- Each bullet starts with action verb
+- Include metrics where possible
+
+Return valid JSON only.
+`;
+
+  const userPrompt = `
+Summary:
+${aboutMe}
+
+Experience:
+${experience.map(e => `
+${e.role} at ${e.company}
+${e.points?.join("; ") || e.description}
+`).join("\n")}
+
+Projects:
+${projects.map(p => `
+${p.name} (${p.techStack})
+${p.points?.join("; ") || p.description}
+`).join("\n")}
+
+Skills:
+${skills.slice(0, 12).join(", ")}
+
+Output JSON format:
 {
-  "about": "improved professional summary string",
-  "experience": [
-    {
-      "company": "same as input",
-      "role": "same as input",
-      "duration": "same as input",
-      "description": "same as input",
-      "points": ["improved bullet 1", "improved bullet 2", "improved bullet 3"]
-    }
-  ],
-  "projects": [
-    {
-      "name": "inhanced name",
-      "techStack": "dame but proper formating",
-      "description": "same as input",
-      "points": ["improved bullet 1", "improved bullet 2", "improved bullet 3"]
-    }
-  ],
-  "suggestions": [
-    "Actionable tip 1",
-    "Actionable tip 2",
-    "Actionable tip 3"
-  ],
-  "finalReview": "8.5"
+  "about": "...",
+  "experience": [{ "company": "", "role": "", "duration": "", "points": [] }],
+  "projects": [{ "name": "", "techStack": "", "points": [] }],
+  "suggestions": [],
+  "finalReview": ""
 }
 `;
 
-  const res = await mistralChat.invoke(prompt);
+
+  const res = await mistralChat.invoke([
+    { role: "system", content: systemPrompt },
+    { role: "user", content: userPrompt }
+  ]);
 
   const content =
     typeof res.content === "string"
