@@ -18,7 +18,7 @@
     "cors": "^2.8.6",
     "dotenv": "^17.4.1",
     "express": "^4.22.1",
-    "langsmith": "^0.5.16"
+    "langsmith": "^0.5.18"
   },
   "devDependencies": {
     "@types/cors": "^2.8.19",

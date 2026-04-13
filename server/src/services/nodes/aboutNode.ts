@@ -5,7 +5,7 @@ import { googleChat } from "../../models/llm.models";
 export const GenAboutNode: GraphNode<typeof state> = async (state) => {
   const { personalInfo, aboutMe, education, experience, skills, projects, isFresher } = state;
 
-const prompt = `
+  const prompt = `
 You are a world-class ATS resume writer trusted by Fortune 500 recruiters.
 
 Your task is to craft a razor-sharp, ATS-optimized Professional Summary that makes recruiters stop scrolling.
@@ -60,8 +60,8 @@ Nothing else — no explanation, no label, no preamble.
       ? response.content
       : response.content.map(c => ("text" in c ? c.text : "")).join("");
 
+  // ✅ CORRECT - sirf changed field return karo
   return {
-    ...state,
-    aboutMe: [{about:content.trim(),target:state.aboutMe[0].target}]
+    aboutMe: [{ about: content.trim(), target: state.aboutMe[0].target }]
   };
 };

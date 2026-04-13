@@ -62,7 +62,6 @@ STRICTLY return only the JSON array, nothing else.
   }
 
   return {
-    ...state,
     experience: enhancedExperience,
   };
 };

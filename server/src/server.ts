@@ -8,20 +8,6 @@ dotenv.config();
 const app = express();
 app.use(express.json());
 
-// 👇 safe fallback add kiya
-// const allowedOrigins = process.env.CLIENT_URL?.split(",");
-
-// app.use(cors({
-//   origin: function (origin, callback) {
-//     if (!origin || allowedOrigins?.includes(origin)) {
-//       callback(null, true);
-//     } else {
-//       callback(new Error("CORS not allowed"));
-//     }
-//   },
-//   credentials: true
-// }));
-
 app.use(cors({
   origin: "*"
 }));

@@ -1,48 +1,67 @@
-import { StateSchema } from "@langchain/langgraph"
+import { Annotation, messagesStateReducer } from "@langchain/langgraph";
 import { z } from "zod";
 
-export const state = new StateSchema({
-  personalInfo: z.object({
-    name: z.string().default(""),
-    email: z.string().default(""),
-    phone: z.string().default(""),
-    location: z.string().default(""),
-    linkedin: z.string().default(""),
-    github: z.string().default(""),
+export const state = Annotation.Root({
+  personalInfo: Annotation<{
+    name: string;
+    email: string;
+    phone: string;
+    location: string;
+    linkedin: string;
+    github: string;
+  }>(),
+
+  aboutMe: Annotation<{ about: string; target: string }[]>({
+    reducer: (prev, next) => next, // latest override karega
+    default: () => [],
   }),
 
-  aboutMe: z.array(z.object({
-    about: z.string().default(""),
-    target: z.string().default(""),
-  })).default([]), //cohere
-
-  education: z.object({
-    college: z.string().default(""),
-    degree: z.string().default(""),
-    branch: z.string().default(""),
-    year: z.string().default(""),
-    cgpa: z.string().default(""),
+  experience: Annotation<{
+    company: string;
+    role: string;
+    duration: string;
+    description: string;
+    points: string[];
+  }[]>({
+    reducer: (prev, next) => next,
+    default: () => [],
   }),
 
-  experience: z.array(z.object({
-    company: z.string().default(""),
-    role: z.string().default(""),
-    duration: z.string().default(""),
-    description: z.string().default(""), // ✅ user ka raw input
-    points: z.array(z.string()).default([]), // ✅ AI generated bullet points
-  })).default([]),
+  projects: Annotation<{
+    name: string;
+    techStack: string;
+    description: string;
+    points: string[];
+  }[]>({
+    reducer: (prev, next) => next,
+    default: () => [],
+  }),
 
-  projects: z.array(z.object({
-    name: z.string().default(""),
-    techStack: z.string().default(""),
-    description: z.string().default(""), // ✅ user ka raw input
-    points: z.array(z.string()).default([]), // ✅ AI generated bullet points
-  })).default([]),
+  skills: Annotation<string[]>({
+    reducer: (prev, next) => next,
+    default: () => [],
+  }),
 
-  skills: z.array(z.string()).default([]),
+  education: Annotation<{
+    college: string;
+    degree: string;
+    branch: string;
+    year: string;
+    cgpa: string;
+  }>(),
 
-  isFresher: z.boolean().default(false),
-  suggestions: z.array(z.string()).default([]),
+  isFresher: Annotation<boolean>({
+    reducer: (prev, next) => next,
+    default: () => false,
+  }),
 
-  finalReview: z.string().default(""),//mistral
+  suggestions: Annotation<string[]>({
+    reducer: (prev, next) => next,
+    default: () => [],
+  }),
+
+  finalReview: Annotation<string>({
+    reducer: (prev, next) => next,
+    default: () => "",
+  }),
 });

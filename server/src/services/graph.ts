@@ -12,15 +12,19 @@ const graph = new StateGraph(state)
   .addNode("FinalNode", FinalNode)
 
   .addEdge(START, "GenAboutNode")
+  .addEdge(START,"GenProjectsNode")
 
   // conditional routing
-  .addConditionalEdges("GenAboutNode", (state) => {
-    return state.isFresher
-      ? "GenProjectsNode"           // fresher skip
-      : "GenExperienceNode"; // run experience
+  .addConditionalEdges(START, (state) => {
+    if(!state.isFresher){
+      return "GenExperienceNode"
+    }else {
+      return "FinalNode";
+    }
   })
 
-  .addEdge("GenExperienceNode", "GenProjectsNode")
+
+  .addEdge("GenAboutNode","FinalNode")
   .addEdge("GenProjectsNode", "FinalNode")
   .addEdge("FinalNode", END)
 
