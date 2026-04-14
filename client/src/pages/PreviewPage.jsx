@@ -41,61 +41,62 @@ export default function PreviewPage() {
     if (!resumeRef.current) return;
     setDownloading(true);
 
-    // Save original styles to restore later
     const element = resumeRef.current;
+
+    // Save original styles
     const originalWidth = element.style.width;
     const originalMaxWidth = element.style.maxWidth;
     const originalPadding = element.style.padding;
     const originalBoxShadow = element.style.boxShadow;
 
     try {
-      // ✅ Force A4 dimensions and fixed padding for PDF capture 
-      // This prevents mobile responsive styles from breaking the layout
+      // ✅ Force desktop layout (important for mobile consistency)
       element.style.width = "794px";
       element.style.maxWidth = "none";
       element.style.padding = "56px 64px";
       element.style.boxShadow = "none";
 
       const canvas = await html2canvas(element, {
-        scale: 2, // High resolution
+        scale: 3, // 🔥 better quality
         useCORS: true,
-        logging: false,
         backgroundColor: "#ffffff",
-        windowWidth: 794, // Simulate desktop width for capture
+        windowWidth: 794,
       });
 
-      const imgData = canvas.toDataURL("image/png");
+      // ✅ compress image (size reduce)
+      const imgData = canvas.toDataURL("image/jpeg", 0.75);
+
       const pdf = new jsPDF("p", "mm", "a4");
 
-      const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = pdf.internal.pageSize.getHeight();
+      const pdfWidth = 210;
+      const pdfHeight = 297;
 
-      const imgWidth = pdfWidth;
-      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+      const imgHeight = (canvas.height * pdfWidth) / canvas.width;
 
       let heightLeft = imgHeight;
       let position = 0;
 
-      // Add pages
-      pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
-      heightLeft -= pdfHeight;
-
+      // ✅ clean multi-page logic
       while (heightLeft > 0) {
-        position = heightLeft - imgHeight;
-        pdf.addPage();
-        pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
+        pdf.addImage(imgData, "JPEG", 0, position, pdfWidth, imgHeight);
         heightLeft -= pdfHeight;
+
+        if (heightLeft > 0) {
+          pdf.addPage();
+          position = -pdfHeight;
+        }
       }
 
       pdf.save(`${personalInfo?.name?.replace(/\s+/g, "_") || "resume"}.pdf`);
     } catch (error) {
       console.error("PDF generation error:", error);
     } finally {
-      // ✅ Restore original styles
+      // restore styles
       element.style.width = originalWidth;
       element.style.maxWidth = originalMaxWidth;
       element.style.padding = originalPadding;
       element.style.boxShadow = originalBoxShadow;
+
       setDownloading(false);
     }
   };
