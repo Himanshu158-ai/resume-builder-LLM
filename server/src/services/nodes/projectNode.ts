@@ -22,7 +22,7 @@ INSTRUCTIONS:
 - Write exactly 3-4 bullet points
 - Keep each bullet point concise — maximum 15-20 words per bullet
 - Each bullet MUST start with a strong action verb (Built, Engineered, Optimized, Developed, Implemented, Reduced, Increased, Designed, Architected, Integrated)
-- MUST include at least 1-2 quantified metrics (%, ms, x faster, users, requests/sec) — if user didn't mention numbers, intelligently estimate realistic ones based on the project
+- MUST include 1-2 quantified metrics (%, ms, x faster, users, requests/sec) — if user didn't mention numbers so don't use big numbers, intelligently estimate realistic ones based on the project
 - Naturally include relevant tech stack and skills
 - Focus on architecture, performance, and real impact
 - Be specific, not generic — reflect what the user actually built
@@ -31,7 +31,7 @@ INSTRUCTIONS:
 
 OUTPUT FORMAT:
 Return ONLY a valid JSON array of strings. No markdown, no explanation.
-Example: ["Designed REST APIs...", "Optimized query performance..."]
+Example: ["based on their project...", "Optimized query performance..."]
 
 STRICTLY return only the JSON array, nothing else.
 `;

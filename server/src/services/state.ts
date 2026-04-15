@@ -194,10 +194,6 @@ export const state = Annotation.Root({
   // --------------------
   // AI OUTPUT
   // --------------------
-  suggestions: Annotation<string[]>({
-    reducer: (prev, next) => next,
-    default: () => [],
-  }),
 
   finalReview: Annotation<string>({
     reducer: (prev, next) => next,

@@ -13,9 +13,8 @@ export const FinalNode: GraphNode<typeof state> = async (state) => {
   REVIEW CHECKLIST:
   1. Fix grammar, clarity, and professional tone
   2. Strengthen weak bullet points with better action verbs
-  3. Add missing ATS keywords naturally
+  3. Add missing ATS keywords naturally on the basis of his/her achivement,skills,experience,projects
   4. Ensure quantified metrics exist in bullet points
-  5. Generate actionable suggestions for candidate improvement
 
   INPUT DATA:
 
@@ -62,11 +61,6 @@ export const FinalNode: GraphNode<typeof state> = async (state) => {
         "points": ["improved bullet 1", "improved bullet 2", "improved bullet 3"]
       }
     ],
-    "suggestions": [
-      "Actionable tip 1",
-      "Actionable tip 2",
-      "Actionable tip 3"
-    ],
     "finalReview": "8.5"
   }
   `;
@@ -100,7 +94,6 @@ export const FinalNode: GraphNode<typeof state> = async (state) => {
       : state.aboutMe,
     experience: parsed.experience ?? state.experience,
     projects: parsed.projects ?? state.projects,
-    suggestions: parsed.suggestions ?? [],
     finalReview: String(parsed.finalReview ?? ""),
   };
 };

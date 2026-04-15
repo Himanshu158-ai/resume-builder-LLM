@@ -49,7 +49,6 @@ export default async function runResumeAgent(userData: any) {
       aboutMe: result.aboutMe || userData.aboutMe || [{about:"",target:""}],
       experience: result.experience || userData.experience || [],
       projects: result.projects || userData.projects || [],
-      suggestions: result.suggestions || userData.suggestions || [],
       finalReview: result.finalReview || "0",
     };
 
