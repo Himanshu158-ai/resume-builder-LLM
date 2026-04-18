@@ -65,7 +65,7 @@ const Classical = ({ aboutMe, skills, education, experience, projects, personalI
     });
 
     const SectionTitle = ({ children }) => (
-        <div className="text-[15px] font-bold tracking-widest uppercase text-gray-900 border-b border-gray-700 pb-1 mb-3 font-sans">
+        <div className="text-[15px] font-bold tracking-widest uppercase text-gray-900 border-b-2 border-gray-600 pb-1 mb-3 font-sans">
             {children}
         </div>
     );
@@ -92,7 +92,7 @@ const Classical = ({ aboutMe, skills, education, experience, projects, personalI
                         {personalInfo?.name || "Your Name"}
                     </h1>
                     <p className="text-[13px] text-gray-600 mt-1">
-                        {jobTitle}
+                        {jobTitle || "MERN Stack Developer | AI Integration"}
                     </p>
                 </div>
 
@@ -100,15 +100,15 @@ const Classical = ({ aboutMe, skills, education, experience, projects, personalI
                 <div className="text-right text-[12px] text-gray-900 space-y-1.5 w-1/3 flex flex-col">
                     {/* Only the text span is editable to prevent deleting the icon */}
                     {personalInfo?.email && <div className="flex items-center justify-start gap-1.5 w-full"> 
-                        {isEditing ? <span {...editableProps(val => handleFieldChange('personalInfo', 'email', val))}>{personalInfo.email}</span> : <a href={`mailto:${personalInfo.email}`} className="text-blue-600 hover:underline">{personalInfo.email}</a>}
+                        {isEditing ? <span {...editableProps(val => handleFieldChange('personalInfo', 'email', val))}>{personalInfo.email}</span> : <a href={`mailto:${personalInfo.email}`} className="text-gray-700 hover:underline">{personalInfo.email}</a>}
                     </div>}
                     {personalInfo?.phone && <div className="flex items-center justify-start gap-1.5 w-full"> <span {...editableProps(val => handleFieldChange('personalInfo', 'phone', val))}>{personalInfo.phone}</span></div>}
                     {personalInfo?.location && <div className="flex items-center justify-start gap-1.5 w-full"> <span {...editableProps(val => handleFieldChange('personalInfo', 'location', val))}>{personalInfo.location}</span></div>}
                     {personalInfo?.linkedin && <div className="flex items-center justify-start gap-1.5 w-full"> 
-                        {isEditing ? <span {...editableProps(val => handleFieldChange('personalInfo', 'linkedin', val))}>{personalInfo.linkedin}</span> : <a href={personalInfo.linkedin.startsWith('http') ? personalInfo.linkedin : `https://${personalInfo.linkedin}`} target="_blank" rel="noreferrer" className="text-blue-600 hover:underline">{personalInfo.linkedin}</a>}
+                        {isEditing ? <span {...editableProps(val => handleFieldChange('personalInfo', 'linkedin', val))}>{personalInfo.linkedin}</span> : <a href={personalInfo.linkedin.startsWith('http') ? personalInfo.linkedin : `https://${personalInfo.linkedin}`} target="_blank" rel="noreferrer" className="text-gray-700 hover:underline">{personalInfo.linkedin}</a>}
                     </div>}
                     {personalInfo?.github && <div className="flex items-center justify-start gap-1.5 w-full"> 
-                        {isEditing ? <span {...editableProps(val => handleFieldChange('personalInfo', 'github', val))}>{personalInfo.github}</span> : <a href={personalInfo.github.startsWith('http') ? personalInfo.github : `https://${personalInfo.github}`} target="_blank" rel="noreferrer" className="text-blue-600 hover:underline">{personalInfo.github}</a>}
+                        {isEditing ? <span {...editableProps(val => handleFieldChange('personalInfo', 'github', val))}>{personalInfo.github}</span> : <a href={personalInfo.github.startsWith('http') ? personalInfo.github : `https://${personalInfo.github}`} target="_blank" rel="noreferrer" className="text-gray-700 hover:underline">{personalInfo.github}</a>}
                     </div>}
                 </div>
             </div>
@@ -144,10 +144,10 @@ const Classical = ({ aboutMe, skills, education, experience, projects, personalI
                     {experience.map((exp, i) => (
                         <div key={i} className="mb-3">
                             <div className="flex justify-between">
-                                <p className="font-semibold text-[13px]">
+                                <p className="font-semibold text-[13px] text-gray-800">
                                     <span {...editableProps(val => handleArrayItemChange('experience', i, 'role', val))}>{exp.role}</span> — <span {...editableProps(val => handleArrayItemChange('experience', i, 'company', val))}>{exp.company}</span>
                                 </p>
-                                <p {...editableProps(val => handleArrayItemChange('experience', i, 'duration', val), "text-[12px] text-gray-500")}>
+                                <p {...editableProps(val => handleArrayItemChange('experience', i, 'duration', val), "text-[12px] text-gray-600")}>
                                     {exp.duration}
                                 </p>
                             </div>
@@ -170,10 +170,10 @@ const Classical = ({ aboutMe, skills, education, experience, projects, personalI
                     {projects.map((p, i) => (
                         <div key={i} className="mb-3">
                             <div className="flex justify-between">
-                                <p {...editableProps(val => handleArrayItemChange('projects', i, 'name', val), "font-semibold text-[13px]")}>
+                                <p {...editableProps(val => handleArrayItemChange('projects', i, 'name', val), "font-semibold text-[13px] text-gray-800")}>
                                     {p.name}
                                 </p>
-                                <p {...editableProps(val => handleArrayItemChange('projects', i, 'techStack', val), "text-[12px] text-gray-500")}>
+                                <p {...editableProps(val => handleArrayItemChange('projects', i, 'techStack', val), "text-[12px] text-gray-600")}>
                                     {p.techStack}
                                 </p>
                             </div>
