@@ -65,7 +65,7 @@ const Classical = ({ aboutMe, skills, education, experience, projects, personalI
     });
 
     const SectionTitle = ({ children }) => (
-        <div className="text-[10.5px] font-bold tracking-widest uppercase text-gray-900 border-b border-gray-400 pb-1 mb-3 font-sans">
+        <div className="text-[15px] font-bold tracking-widest uppercase text-gray-900 border-b border-gray-700 pb-1 mb-3 font-sans">
             {children}
         </div>
     );
@@ -83,11 +83,11 @@ const Classical = ({ aboutMe, skills, education, experience, projects, personalI
             }}
         >
             {/* HEADER */}
-            <div className="flex justify-between items-start border-b border-gray-300 pb-4 mb-5">
+            <div className="flex justify-between items-start  pb-4 mb-5">
                 {/* LEFT */}
                 <div>
                     <h1 
-                        {...editableProps(val => handleFieldChange('personalInfo', 'name', val), "text-[26px] font-bold m-0 tracking-tight")}
+                        {...editableProps(val => handleFieldChange('personalInfo', 'name', val), "text-[33px] font-semibold m-0 tracking-tight")}
                     >
                         {personalInfo?.name || "Your Name"}
                     </h1>
