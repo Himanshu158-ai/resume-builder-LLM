@@ -1,7 +1,7 @@
 import React from 'react'
 import { useRef } from 'react';
 
-const Classical = ({ aboutMe, skills, education, experience, projects, personalInfo, isEditing, setEditedResume, isFresher }) => {
+const Classical = ({ aboutMe, skills, education, experience, projects, personalInfo, isEditing, setEditedResume, isFresher, jobTitle }) => {
     const resumeRef = useRef();
     
     // Helpers for editing
@@ -92,7 +92,7 @@ const Classical = ({ aboutMe, skills, education, experience, projects, personalI
                         {personalInfo?.name || "Your Name"}
                     </h1>
                     <p className="text-[13px] text-gray-600 mt-1">
-                        MERN Stack Developer | AI Enthusiast
+                        {jobTitle}
                     </p>
                 </div>
 

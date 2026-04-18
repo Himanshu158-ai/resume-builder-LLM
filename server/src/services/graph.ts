@@ -50,6 +50,7 @@ export default async function runResumeAgent(userData: any) {
       experience: result.experience || userData.experience || [],
       projects: result.projects || userData.projects || [],
       finalReview: result.finalReview || "0",
+      jobTitle: result.jobTitle || "",
     };
 
   } catch (error) {

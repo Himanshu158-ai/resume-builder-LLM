@@ -51,6 +51,7 @@ export default function PreviewPage() {
     finalReview,
     aboutMe,
     isFresher,
+    jobTitle,
   } = editedResume;
 
   const scorePercent = (parseFloat(finalReview || "0") / 10) * 100;
@@ -66,6 +67,7 @@ export default function PreviewPage() {
     setEditedResume,
     editedResume,
     isFresher,
+    jobTitle,
   };
 
   const downloadPDF = async () => {

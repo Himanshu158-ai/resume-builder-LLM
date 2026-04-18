@@ -200,6 +200,11 @@ export const state = Annotation.Root({
     default: () => "",
   }),
 
+  jobTitle: Annotation<string>({
+    reducer: (prev, next) => next,
+    default: () => "",
+  }),
+
   // --------------------
   // CHAT HISTORY (future use)
   // --------------------

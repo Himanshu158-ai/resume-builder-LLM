@@ -8,32 +8,55 @@ export const GenProjectsNode: GraphNode<typeof state> = async (state) => {
   const enhancedProjects = [];
 
   for (const project of projects) {
+    const hasRealWorldUsage = project.description.toLowerCase().match(
+      /college|company|team|client|deployed|production|users|use ho|chal raha|live/i
+    );
+
+    const hasUseCase = project.description.toLowerCase().match(
+      /can be used|use case|helpful for|designed for|target|purpose|save|reduce|improve/i
+    );
+
     const prompt = `
-You are an expert ATS resume writer and career coach.
+You are a professional ATS resume writer.
 
-Your job is to convert raw project description into powerful, ATS-optimized bullet points that get interviews.
-
-Project Name: ${project.name}
+PROJECT:
+Name: ${project.name}
 Tech Stack: ${project.techStack}
-Raw Description: ${project.description}
-Relevant Skills: ${skills.join(", ")}
+Description: ${project.description}
+Skills: ${skills.join(", ")}
 
-INSTRUCTIONS:
-- Write exactly 3-4 bullet points
-- Keep each bullet point concise — maximum 15-20 words per bullet
-- Each bullet MUST start with a strong action verb (Built, Engineered, Optimized, Developed, Implemented, Reduced, Increased, Designed, Architected, Integrated)
-- MUST include 1-2 quantified metrics (%, ms, x faster, users, requests/sec) — if user didn't mention numbers so don't use big numbers, intelligently estimate realistic ones based on the project
-- Naturally include relevant tech stack and skills
-- Focus on architecture, performance, and real impact
-- Be specific, not generic — reflect what the user actually built
-- ATS-friendly keywords included
-- No soft skills, no fluff, no headings, no preamble
+TASK:
+Write 3-4 bullet points for this project.
 
-OUTPUT FORMAT:
-Return ONLY a valid JSON array of strings. No markdown, no explanation.
-Example: ["based on their project...", "Optimized query performance..."]
+CONTENT RULES:
+- Enhance what user has described — do NOT add anything user has not mentioned
+- Only use technologies user has listed in Tech Stack
+- Focus on: WHAT was built + HOW it works
+${hasRealWorldUsage ? `- User has mentioned real-world usage → highlight this with strong emphasis
+  Example: "Actively deployed in college environment helping fresher students build resumes"` : ""}
+${hasUseCase ? `- User has mentioned a use case or potential impact → highlight that naturally
+  Example: "Streamlines manager workflow by automating email composition and delivery"` : ""}
 
-STRICTLY return only the JSON array, nothing else.
+METRICS RULE:
+- If user has mentioned numbers/metrics → use them other wise do not invent any
+- Convert real impact to qualitative if no numbers given
+  Example: "saves time" → "reduces manual effort for leadership"
+  NOT → "saves 40% time" (never do this)
+
+WRITING RULES:
+- Start each bullet with strong action verb
+- Maximum 15 words per bullet
+- Only include tech stack user provided
+- No soft skills, no fluff, no fake metrics
+
+STRICT RULE:
+Never invent numbers, percentages, or metrics.
+Never add technologies not mentioned in Tech Stack.
+Only enhance what user has explicitly provided.
+
+OUTPUT:
+Return ONLY a valid JSON array of 3-4 strings.
+No markdown, no explanation, nothing else.
 `;
 
     const res = await cohereChat.invoke(prompt);
