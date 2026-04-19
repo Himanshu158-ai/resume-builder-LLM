@@ -65,7 +65,7 @@ const Classical = ({ aboutMe, skills, education, experience, projects, personalI
     });
 
     const SectionTitle = ({ children }) => (
-        <div className="text-[15px] font-bold tracking-widest uppercase text-gray-900 border-b-2 border-gray-600 pb-1 mb-3 font-sans">
+        <div className="text-[15px] font-bold tracking-widest uppercase text-gray-900 border-b-1 border-gray-600 pb-1 mb-3 font-sans">
             {children}
         </div>
     );
@@ -100,15 +100,15 @@ const Classical = ({ aboutMe, skills, education, experience, projects, personalI
                 <div className="text-right text-[12px] text-gray-900 space-y-1.5 w-1/3 flex flex-col">
                     {/* Only the text span is editable to prevent deleting the icon */}
                     {personalInfo?.email && <div className="flex items-center justify-start gap-1.5 w-full"> 
-                        {isEditing ? <span {...editableProps(val => handleFieldChange('personalInfo', 'email', val))}>{personalInfo.email}</span> : <a href={`mailto:${personalInfo.email}`} className="text-gray-700 hover:underline">{personalInfo.email}</a>}
+                        {isEditing ? <span {...editableProps(val => handleFieldChange('personalInfo', 'email', val))}>{personalInfo.email}</span> : <a href={`mailto:${personalInfo.email}`} className="text-gray-700 hover:underline hover:text-blue-400">{personalInfo.email}</a>}
                     </div>}
                     {personalInfo?.phone && <div className="flex items-center justify-start gap-1.5 w-full"> <span {...editableProps(val => handleFieldChange('personalInfo', 'phone', val))}>{personalInfo.phone}</span></div>}
                     {personalInfo?.location && <div className="flex items-center justify-start gap-1.5 w-full"> <span {...editableProps(val => handleFieldChange('personalInfo', 'location', val))}>{personalInfo.location}</span></div>}
                     {personalInfo?.linkedin && <div className="flex items-center justify-start gap-1.5 w-full"> 
-                        {isEditing ? <span {...editableProps(val => handleFieldChange('personalInfo', 'linkedin', val))}>{personalInfo.linkedin}</span> : <a href={personalInfo.linkedin.startsWith('http') ? personalInfo.linkedin : `https://${personalInfo.linkedin}`} target="_blank" rel="noreferrer" className="text-gray-700 hover:underline">{personalInfo.linkedin}</a>}
+                        {isEditing ? <span {...editableProps(val => handleFieldChange('personalInfo', 'linkedin', val))}>{personalInfo.linkedin}</span> : <a href={personalInfo.linkedin.startsWith('http') ? personalInfo.linkedin : `https://${personalInfo.linkedin}`} target="_blank" rel="noreferrer" className="text-gray-700 hover:underline hover:text-blue-400">{personalInfo.linkedin}</a>}
                     </div>}
                     {personalInfo?.github && <div className="flex items-center justify-start gap-1.5 w-full"> 
-                        {isEditing ? <span {...editableProps(val => handleFieldChange('personalInfo', 'github', val))}>{personalInfo.github}</span> : <a href={personalInfo.github.startsWith('http') ? personalInfo.github : `https://${personalInfo.github}`} target="_blank" rel="noreferrer" className="text-gray-700 hover:underline">{personalInfo.github}</a>}
+                        {isEditing ? <span {...editableProps(val => handleFieldChange('personalInfo', 'github', val))}>{personalInfo.github}</span> : <a href={personalInfo.github.startsWith('http') ? personalInfo.github : `https://${personalInfo.github}`} target="_blank" rel="noreferrer" className="text-gray-700 hover:underline hover:text-blue-400">{personalInfo.github}</a>}
                     </div>}
                 </div>
             </div>
@@ -151,10 +151,13 @@ const Classical = ({ aboutMe, skills, education, experience, projects, personalI
                                     {exp.duration}
                                 </p>
                             </div>
-                            <ul className="ml-4 mt-1 text-[13px] list-disc">
+                            <ul className="mt-1 text-[13px] flex flex-col gap-1 pl-2">
                                 {exp.points?.map((p, j) => (
-                                    <li key={j} {...editableProps(val => handleArrayPointChange('experience', i, j, val))}>
-                                        {p}
+                                    <li key={j} className="flex items-start gap-2">
+                                        <span className="text-gray-800">•</span>
+                                        <span {...editableProps(val => handleArrayPointChange('experience', i, j, val))} className="flex-1 leading-relaxed">
+                                            {p}
+                                        </span>
                                     </li>
                                 ))}
                             </ul>
@@ -168,7 +171,7 @@ const Classical = ({ aboutMe, skills, education, experience, projects, personalI
                 <div className="mb-4">
                     <SectionTitle>Projects</SectionTitle>
                     {projects.map((p, i) => (
-                        <div key={i} className="mb-3">
+                        <div key={i} className="mb-5">
                             <div className="flex justify-between">
                                 <p {...editableProps(val => handleArrayItemChange('projects', i, 'name', val), "font-semibold text-[13px] text-gray-800")}>
                                     {p.name}
@@ -177,10 +180,13 @@ const Classical = ({ aboutMe, skills, education, experience, projects, personalI
                                     {p.techStack}
                                 </p>
                             </div>
-                            <ul className="ml-4 mt-1 text-[13px] list-disc">
+                            <ul className="mt-1 text-[13px] flex flex-col pl-1">
                                 {p.points?.map((pt, j) => (
-                                    <li key={j} {...editableProps(val => handleArrayPointChange('projects', i, j, val))}>
-                                        {pt}
+                                    <li key={j} className="flex items-start gap-1.5">
+                                        <span className="text-gray-900">•</span>
+                                        <span {...editableProps(val => handleArrayPointChange('projects', i, j, val))} className="flex-1 leading-relaxed">
+                                            {pt}
+                                        </span>
                                     </li>
                                 ))}
                             </ul>

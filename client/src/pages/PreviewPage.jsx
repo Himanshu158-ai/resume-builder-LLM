@@ -5,19 +5,23 @@ import html2canvas from "html2canvas-pro";
 import Classical from "../templates/Classical";
 import ModernMinimalist from "../templates/ModernMinimalist";
 import ExecutiveClean from "../templates/Executiveclean";
+import { PDFDownloadLink } from '@react-pdf/renderer';
+import ClassicalPDF from '../pdf-download/classicalResumePdf';
+
+
 
 const TEMPLATES = [
-  { id: "classical",        label: "Classical",        emoji: "📜" },
-  { id: "modern",           label: "Modern",           emoji: "🎨" },
-  { id: "executive",        label: "Executive Clean",  emoji: "🖤" },
+  { id: "classical", label: "Classical", emoji: "📜" },
+  // { id: "modern", label: "Modern", emoji: "🎨" },
+  // { id: "executive", label: "Executive Clean", emoji: "🖤" },
 ];
 
 function TemplateRenderer({ id, props }) {
   switch (id) {
-    case "classical":   return <Classical        {...props} />;
-    case "modern":      return <ModernMinimalist {...props} />;
-    case "executive":   return <ExecutiveClean   {...props} />;
-    default:            return <Classical        {...props} />;
+    case "classical": return <Classical        {...props} />;
+    case "modern": return <ModernMinimalist {...props} />;
+    case "executive": return <ExecutiveClean   {...props} />;
+    default: return <Classical        {...props} />;
   }
 }
 
@@ -28,10 +32,10 @@ export default function PreviewPage() {
 
   const resume = state?.resume;
 
-  const [isEditing,        setIsEditing]        = useState(false);
-  const [downloading,      setDownloading]      = useState(false);
-  const [editedResume,     setEditedResume]     = useState(resume);
-  const [sidebarOpen,      setSidebarOpen]      = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [downloading, setDownloading] = useState(false);
+  const [editedResume, setEditedResume] = useState(resume);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [selectedTemplate, setSelectedTemplate] = useState("classical");
 
   if (!resume) {
@@ -70,80 +74,6 @@ export default function PreviewPage() {
     jobTitle,
   };
 
-  const downloadPDF = async () => {
-    if (!resumeRef.current) return;
-    setDownloading(true);
-
-    const templateEl = resumeRef.current.firstElementChild || resumeRef.current;
-
-    const offscreen = document.createElement("div");
-    offscreen.style.position = "fixed";
-    offscreen.style.left = "-9999px";
-    offscreen.style.top = "0";
-    offscreen.style.width = "794px";
-    offscreen.style.zIndex = "-9999";
-    offscreen.style.background = "#ffffff";
-
-    const clone = templateEl.cloneNode(true);
-    clone.style.boxShadow = "none";
-    clone.style.margin = "0";
-
-    offscreen.appendChild(clone);
-    document.body.appendChild(offscreen);
-
-    try {
-      const canvas = await html2canvas(clone, {
-        scale: 3,
-        useCORS: true,
-        backgroundColor: "#ffffff",
-        width: 794,
-        windowWidth: 794,
-        x: 0,
-        y: 0,
-        scrollX: 0,
-        scrollY: 0,
-      });
-
-      const imgData = canvas.toDataURL("image/jpeg", 0.85);
-
-      const pdf = new jsPDF("p", "mm", "a4");
-      const pdfWidth = 210;
-      const pdfHeight = 297;
-      const imgHeight = (canvas.height * pdfWidth) / canvas.width;
-
-      let heightLeft = imgHeight;
-      let position = 0;
-
-      while (heightLeft > 0) {
-        pdf.addImage(imgData, "JPEG", 0, position, pdfWidth, imgHeight);
-        heightLeft -= pdfHeight;
-        if (heightLeft > 0) {
-          pdf.addPage();
-          position = -pdfHeight;
-        }
-      }
-
-      pdf.save(`${personalInfo?.name?.replace(/\s+/g, "_") || "resume"}.pdf`);
-    } catch (error) {
-      console.error("PDF generation error:", error);
-    } finally {
-      document.body.removeChild(offscreen);
-      setDownloading(false);
-    }
-  };
-
-//   const downloadPDF = () => {
-//   const printContents = document.getElementById("resume").innerHTML;
-//   const originalContents = document.body.innerHTML;
-
-//   document.body.innerHTML = printContents;
-
-//   window.print();
-
-//   document.body.innerHTML = originalContents;
-
-//   window.location.reload(); // important to restore React
-// };
 
 
   return (
@@ -153,12 +83,24 @@ export default function PreviewPage() {
       <div className="lg:hidden flex items-center justify-between bg-white border-b border-gray-200 px-4 py-3 sticky top-0 z-30 shadow-sm">
         <span className="font-semibold text-gray-800 text-sm">Resume Preview</span>
         <div className="flex gap-2">
-          <button
-            onClick={downloadPDF}
-            className="text-xs bg-blue-700 text-white px-3 py-1.5 rounded-md font-semibold"
+          <PDFDownloadLink
+            document={
+              <ClassicalPDF
+                aboutMe={aboutMe}
+                skills={skills}
+                education={education}
+                experience={experience}
+                projects={projects}
+                personalInfo={personalInfo}
+                isFresher={isFresher}
+                jobTitle={jobTitle}
+              />
+            }
+            fileName={`${personalInfo?.name?.replace(/\s+/g, "_") || "resume"}.pdf`}
+            className="text-xs bg-indigo-600 text-white px-3 py-1.5 rounded-md hover:bg-indigo-700 transition-colors shadow-sm font-medium flex items-center"
           >
-            {downloading ? "..." : "Download"}
-          </button>
+            {({ loading }) => loading ? 'Generating...' : 'Download PDF'}
+          </PDFDownloadLink>
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
             className="text-xs bg-gray-900 text-white px-3 py-1.5 rounded-md"
@@ -215,13 +157,24 @@ export default function PreviewPage() {
           </button>
 
           {/* Download Button */}
-          <button
-            onClick={downloadPDF}
-            disabled={downloading}
-            className="w-full py-2.5 bg-blue-700 text-white rounded-lg text-sm font-semibold hover:bg-blue-800 transition-colors cursor-pointer disabled:opacity-60"
+          <PDFDownloadLink
+            document={
+              <ClassicalPDF
+                aboutMe={aboutMe}
+                skills={skills}
+                education={education}
+                experience={experience}
+                projects={projects}
+                personalInfo={personalInfo}
+                isFresher={isFresher}
+                jobTitle={jobTitle}
+              />
+            }
+            fileName={`${personalInfo?.name?.replace(/\s+/g, "_") || "resume"}.pdf`}
+            className="flex items-center justify-center w-full py-2.5 bg-gradient-to-r from-emerald-500 to-green-600 text-white rounded-lg text-sm font-medium hover:from-emerald-600 hover:to-green-700 transition-all shadow-sm"
           >
-            {downloading ? "Generating PDF..." : "⬇ Download PDF"}
-          </button>
+            {({ loading }) => loading ? 'Generating...' : 'Download PDF'}
+          </PDFDownloadLink>
 
           {/* Back Button */}
           <button
