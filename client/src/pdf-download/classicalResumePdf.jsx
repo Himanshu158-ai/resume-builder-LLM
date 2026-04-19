@@ -2,12 +2,12 @@ import { Document, Page, Text, View, Link, StyleSheet } from '@react-pdf/rendere
 
 const styles = StyleSheet.create({
   page: {
-    paddingTop: 40,
-    paddingBottom: 40,
-    paddingLeft: 50,
-    paddingRight: 50,
+    paddingTop: 35,
+    paddingBottom: 35,
+    paddingLeft: 45,
+    paddingRight: 45,
     fontFamily: 'Helvetica',
-    fontSize: 10,
+    fontSize: 9.5,
     color: '#111827',
     backgroundColor: '#ffffff',
   },
@@ -17,62 +17,65 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
-    borderBottomWidth: 0,
-    paddingBottom: 14,
-    marginBottom: 14,
+    paddingBottom: 10,
+    marginBottom: 10,
   },
   name: {
-    fontSize: 22,
+    fontSize: 21,
     fontFamily: 'Helvetica-Bold',
     letterSpacing: 0.5,
   },
   jobTitle: {
-    fontSize: 11,
+    fontSize: 10.5,
     color: '#4B5563',
     marginTop: 3,
+  },
+  rightSection: {
+    flexDirection: 'row',
+    width: '35%',
   },
   contactColumn: {
     flexDirection: 'column',
     alignItems: 'flex-start',
-    gap: 4,
-    width: '38%',
+    gap: 3,
+    width: '100%',
   },
   contactText: {
-    fontSize: 10,
+    fontSize: 9.5,
     color: '#111827',
-    marginBottom: 3,
+    marginBottom: 2.5,
   },
   link: {
-    fontSize: 10,
+    fontSize: 9.5,
     color: '#374151',
     textDecoration: 'none',
-    marginBottom: 3,
+    marginBottom: 2.5,
   },
 
   // SECTION
   sectionTitle: {
-    fontSize: 11,
+    fontSize: 10.5,
     fontFamily: 'Helvetica-Bold',
-    letterSpacing: 2,
+    letterSpacing: 1.5,
     textTransform: 'uppercase',
     color: '#111827',
-    borderBottomWidth: 1.5,
+    borderBottomWidth: 1,
     borderBottomColor: '#4B5563',
     paddingBottom: 2,
-    marginBottom: 8,
+    marginBottom: 6,
     marginTop: 10,
   },
 
   // SUMMARY
   summaryText: {
-    fontSize: 10,
+    fontSize: 9.5,
     color: '#1F2937',
     lineHeight: 1.6,
   },
 
   // SKILLS
   skillsText: {
-    fontSize: 10,
+    fontSize: 9.5,
     color: '#111827',
     lineHeight: 1.5,
   },
@@ -84,23 +87,23 @@ const styles = StyleSheet.create({
     marginBottom: 3,
   },
   itemTitle: {
-    fontSize: 11,
+    fontSize: 10.5,
     fontFamily: 'Helvetica-Bold',
     color: '#1F2937',
   },
   itemSubtitle: {
-    fontSize: 10,
+    fontSize: 9.5,
     color: '#4B5563',
   },
   bullet: {
-    fontSize: 10,
+    fontSize: 9.5,
     color: '#1F2937',
-    marginLeft: 10,
+    marginLeft: 8,
     marginBottom: 2,
     lineHeight: 1.5,
   },
   itemWrapper: {
-    marginBottom: 8,
+    marginBottom: 7,
   },
 
   // EDUCATION
@@ -116,6 +119,7 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
   },
 });
+
 
 const SectionTitle = ({ children }) => (
   <Text style={styles.sectionTitle}>{children}</Text>
@@ -135,36 +139,47 @@ const ClassicalPDF = ({ aboutMe, skills, education, experience, projects, person
           </View>
 
           {/* RIGHT */}
-          <View style={styles.contactColumn}>
-            {personalInfo?.email && (
-              <Link style={styles.link} src={`mailto:${personalInfo.email}`}>
-                {personalInfo.email}
-              </Link>
-            )}
-            {personalInfo?.phone && (
-              <Text style={styles.contactText}>{personalInfo.phone}</Text>
-            )}
-            {personalInfo?.location && (
-              <Text style={styles.contactText}>{personalInfo.location}</Text>
-            )}
-            {personalInfo?.linkedin && (
-              <Link style={styles.link} src={
-                personalInfo.linkedin.startsWith('http')
-                  ? personalInfo.linkedin
-                  : `https://${personalInfo.linkedin}`
-              }>
-                {personalInfo.linkedin}
-              </Link>
-            )}
-            {personalInfo?.github && (
-              <Link style={styles.link} src={
-                personalInfo.github.startsWith('http')
-                  ? personalInfo.github
-                  : `https://${personalInfo.github}`
-              }>
-                {personalInfo.github}
-              </Link>
-            )}
+          <View style={styles.rightSection}>
+            {/* vertical line */}
+            <View style={{
+              width: 1,
+              backgroundColor: '#4B5563',
+              marginHorizontal: 12,
+              alignSelf: 'stretch',
+            }} />
+            <View style={styles.contactColumn}>
+              <View>
+                {personalInfo?.email && (
+                  <Link style={styles.link} src={`mailto:${personalInfo.email}`}>
+                    {personalInfo.email}
+                  </Link>
+                )}
+                {personalInfo?.phone && (
+                  <Text style={styles.contactText}>{personalInfo.phone}</Text>
+                )}
+                {personalInfo?.location && (
+                  <Text style={styles.contactText}>{personalInfo.location}</Text>
+                )}
+                {personalInfo?.linkedin && (
+                  <Link style={styles.link} src={
+                    personalInfo.linkedin.startsWith('http')
+                      ? personalInfo.linkedin
+                      : `https://${personalInfo.linkedin}`
+                  }>
+                    {personalInfo.linkedin}
+                  </Link>
+                )}
+                {personalInfo?.github && (
+                  <Link style={styles.link} src={
+                    personalInfo.github.startsWith('http')
+                      ? personalInfo.github
+                      : `https://${personalInfo.github}`
+                  }>
+                    {personalInfo.github}
+                  </Link>
+                )}
+              </View>
+            </View>
           </View>
         </View>
 

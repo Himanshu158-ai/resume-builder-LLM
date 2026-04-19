@@ -37,6 +37,7 @@ export default function FormPage() {
         withCredentials: true,
       });
       toast.success(res.data.message || "Resume generated successfully!");
+      console.log(res.data);
       navigate("/preview", { state: { resume: res.data } });
     } catch (err) {
       console.log(err);

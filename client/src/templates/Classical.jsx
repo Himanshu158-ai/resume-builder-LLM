@@ -3,7 +3,7 @@ import { useRef } from 'react';
 
 const Classical = ({ aboutMe, skills, education, experience, projects, personalInfo, isEditing, setEditedResume, isFresher, jobTitle }) => {
     const resumeRef = useRef();
-    
+
     // Helpers for editing
     const handleFieldChange = (section, field, value) => {
         if (!setEditedResume) return;
@@ -86,8 +86,8 @@ const Classical = ({ aboutMe, skills, education, experience, projects, personalI
             <div className="flex justify-between items-start  pb-4 mb-5">
                 {/* LEFT */}
                 <div>
-                    <h1 
-                        {...editableProps(val => handleFieldChange('personalInfo', 'name', val), "text-[33px] font-semibold m-0 tracking-tight")}
+                    <h1
+                        {...editableProps(val => handleFieldChange('personalInfo', 'name', val), "text-[37px] font-semibold m-0 tracking-tight")}
                     >
                         {personalInfo?.name || "Your Name"}
                     </h1>
@@ -96,20 +96,38 @@ const Classical = ({ aboutMe, skills, education, experience, projects, personalI
                     </p>
                 </div>
 
+                
                 {/* RIGHT */}
-                <div className="text-right text-[12px] text-gray-900 space-y-1.5 w-1/3 flex flex-col">
+                <div className="text-right text-[12px] text-gray-900 space-y-1.5 w-1/3 flex ">
                     {/* Only the text span is editable to prevent deleting the icon */}
-                    {personalInfo?.email && <div className="flex items-center justify-start gap-1.5 w-full"> 
-                        {isEditing ? <span {...editableProps(val => handleFieldChange('personalInfo', 'email', val))}>{personalInfo.email}</span> : <a href={`mailto:${personalInfo.email}`} className="text-gray-700 hover:underline hover:text-blue-400">{personalInfo.email}</a>}
-                    </div>}
-                    {personalInfo?.phone && <div className="flex items-center justify-start gap-1.5 w-full"> <span {...editableProps(val => handleFieldChange('personalInfo', 'phone', val))}>{personalInfo.phone}</span></div>}
-                    {personalInfo?.location && <div className="flex items-center justify-start gap-1.5 w-full"> <span {...editableProps(val => handleFieldChange('personalInfo', 'location', val))}>{personalInfo.location}</span></div>}
-                    {personalInfo?.linkedin && <div className="flex items-center justify-start gap-1.5 w-full"> 
-                        {isEditing ? <span {...editableProps(val => handleFieldChange('personalInfo', 'linkedin', val))}>{personalInfo.linkedin}</span> : <a href={personalInfo.linkedin.startsWith('http') ? personalInfo.linkedin : `https://${personalInfo.linkedin}`} target="_blank" rel="noreferrer" className="text-gray-700 hover:underline hover:text-blue-400">{personalInfo.linkedin}</a>}
-                    </div>}
-                    {personalInfo?.github && <div className="flex items-center justify-start gap-1.5 w-full"> 
-                        {isEditing ? <span {...editableProps(val => handleFieldChange('personalInfo', 'github', val))}>{personalInfo.github}</span> : <a href={personalInfo.github.startsWith('http') ? personalInfo.github : `https://${personalInfo.github}`} target="_blank" rel="noreferrer" className="text-gray-700 hover:underline hover:text-blue-400">{personalInfo.github}</a>}
-                    </div>}
+                    <div className="w-px bg-gray-600 self-stretch mx-3" />
+                    <div className='text-right text-[12px] text-gray-900 space-y-1 w-full flex flex-col '>
+                        {personalInfo?.email && <div className="flex items-center justify-start gap-1.5 w-full">
+                            {isEditing ? <span {...editableProps(val => handleFieldChange('personalInfo', 'email', val))}>{personalInfo.email}</span> : <a href={`mailto:${personalInfo.email}`} className="text-gray-700 hover:underline hover:text-blue-400">{personalInfo.email}</a>}
+                        </div>}
+                        {personalInfo?.phone && <div className="flex items-center justify-start gap-1.5 w-full"> <span {...editableProps(val => handleFieldChange('personalInfo', 'phone', val))}>{personalInfo.phone}</span></div>}
+                        {personalInfo?.location && <div className="flex items-center justify-start gap-1.5 w-full"> <span {...editableProps(val => handleFieldChange('personalInfo', 'location', val))}>{personalInfo.location}</span></div>}
+                        {personalInfo?.linkedin && <div className="flex items-center justify-start gap-1.5 w-full">
+                            {isEditing ? <span {...editableProps(val => handleFieldChange('personalInfo', 'linkedin', val))}>{personalInfo.linkedin}</span> : <a href={personalInfo.linkedin.startsWith('http') ? personalInfo.linkedin : `https://${personalInfo.linkedin}`} target="_blank" rel="noreferrer" className="text-gray-700 hover:underline hover:text-blue-400">{personalInfo.linkedin}</a>}
+                        </div>}
+                        {personalInfo?.github && (
+                            <div className="flex items-center justify-start gap-1.5 w-full">
+                                {isEditing
+                                    ? <span {...editableProps(val => handleFieldChange('personalInfo', 'github', val))}>
+                                        {personalInfo.github}
+                                    </span>
+                                    : <a
+                                        href={personalInfo.github.startsWith('http') ? personalInfo.github : `https://${personalInfo.github}`}
+                                        target="_blank"
+                                        rel="noreferrer"
+                                        className="text-gray-700 hover:underline hover:text-blue-400"
+                                    >
+                                        {personalInfo.github}
+                                    </a>
+                                }
+                            </div>
+                        )}
+                    </div>
                 </div>
             </div>
 
@@ -117,7 +135,7 @@ const Classical = ({ aboutMe, skills, education, experience, projects, personalI
             {aboutMe && (
                 <div className="mb-4">
                     <SectionTitle>Summary</SectionTitle>
-                    <p 
+                    <p
                         {...editableProps(val => handleAboutMeChange(val), "text-[13px] text-gray-800 leading-relaxed")}
                     >
                         {aboutMe[0]?.about}
@@ -129,7 +147,7 @@ const Classical = ({ aboutMe, skills, education, experience, projects, personalI
             {skills?.length > 0 && (
                 <div className="mb-4">
                     <SectionTitle>Skills</SectionTitle>
-                    <p 
+                    <p
                         {...editableProps(val => handleSkillsChange(val), "text-[13px]")}
                     >
                         {skills.join(" • ")}

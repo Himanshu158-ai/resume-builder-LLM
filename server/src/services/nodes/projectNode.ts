@@ -16,6 +16,7 @@ export const GenProjectsNode: GraphNode<typeof state> = async (state) => {
       /can be used|use case|helpful for|designed for|target|purpose|save|reduce|improve/i
     );
 
+
     const prompt = `
 You are a professional ATS resume writer.
 
@@ -29,29 +30,41 @@ TASK:
 Write 3-4 bullet points for this project.
 
 CONTENT RULES:
-- Enhance what user has described — do NOT add anything user has not mentioned
-- Only use technologies user has listed in Tech Stack
-- Focus on: WHAT was built + HOW it works
-${hasRealWorldUsage ? `- User has mentioned real-world usage → highlight this with strong emphasis
-  Example: "Actively deployed in college environment helping fresher students build resumes"` : ""}
-${hasUseCase ? `- User has mentioned a use case or potential impact → highlight that naturally
-  Example: "Streamlines manager workflow by automating email composition and delivery"` : ""}
+- Read the description carefully — understand WHAT was built, HOW it works, and WHY it was built
+- Every bullet must be SPECIFIC to this project — do NOT write generic bullets that could apply to any project
+- Each bullet must highlight a DIFFERENT aspect: architecture, features, tech integration, real-world usage
+- Only use technologies explicitly listed in Tech Stack — never add extra
+- Enhance the language — do NOT change the meaning or add anything not mentioned
+
+UNIQUENESS RULE:
+- Each bullet must highlight a DIFFERENT aspect of the project
+- Do NOT repeat the same idea in multiple bullets
+- Cover a mix of: what was built, how it works, key features, real-world usage
+- Let the project description guide the structure naturally
+${hasRealWorldUsage ? `- Last bullet → real-world deployment/usage — highlight this strongly
+  Example: "Deployed in college environment to help fresher students build professional resumes"
+  NOT: "Actively deployed" — just use direct verb` : ""}
+${hasUseCase ? `- Highlight the use case or impact naturally in one bullet
+  Example: "Streamlines manager workflow by automating email composition and recipient lookup"` : ""}
 
 METRICS RULE:
-- If user has mentioned numbers/metrics → use them other wise do not invent any
-- Convert real impact to qualitative if no numbers given
-  Example: "saves time" → "reduces manual effort for leadership"
-  NOT → "saves 40% time" (never do this)
+- If user mentioned numbers → use them
+- If user did NOT mention numbers → do NOT invent any
+- Convert qualitative impact naturally
+  Example: "saves time for leadership" → "reduces manual effort for corporate leadership"
+  NEVER → "saves 40% time" or any invented percentage
 
 WRITING RULES:
-- Start each bullet with strong action verb
+- Start each bullet with strong direct action verb
+- NEVER use "Actively" as prefix — just use the verb directly
 - Maximum 15 words per bullet
-- Only include tech stack user provided
 - No soft skills, no fluff, no fake metrics
+- No repeated sentence structures across bullets
 
 STRICT RULE:
 Never invent numbers, percentages, or metrics.
 Never add technologies not mentioned in Tech Stack.
+Never write bullets that could belong to any other project.
 Only enhance what user has explicitly provided.
 
 OUTPUT:
