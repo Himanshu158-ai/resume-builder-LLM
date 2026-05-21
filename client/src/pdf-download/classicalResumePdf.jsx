@@ -41,12 +41,12 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   contactText: {
-    fontSize: 10.1,
+    fontSize: 9,
     color: '#111827',
     marginBottom: 2.5,
   },
   link: {
-    fontSize: 10.1,
+    fontSize: 9,
     color: '#374151',
     textDecoration: 'none',
     marginBottom: 2.5,
