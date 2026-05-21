@@ -7,7 +7,7 @@ const styles = StyleSheet.create({
     paddingLeft: 45,
     paddingRight: 45,
     fontFamily: 'Helvetica',
-    fontSize: 9.5,
+    fontSize: 10,
     color: '#111827',
     backgroundColor: '#ffffff',
   },
@@ -17,18 +17,18 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
-    paddingBottom: 10,
+    paddingBottom: 10.5,
     marginBottom: 10,
   },
   name: {
-    fontSize: 21,
+    fontSize: 22,
     fontFamily: 'Helvetica-Bold',
     letterSpacing: 0.5,
   },
   jobTitle: {
-    fontSize: 10.5,
+    fontSize: 11,
     color: '#4B5563',
-    marginTop: 3,
+    marginTop: 4,
   },
   rightSection: {
     flexDirection: 'row',
@@ -41,12 +41,12 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   contactText: {
-    fontSize: 9.5,
+    fontSize: 10.1,
     color: '#111827',
     marginBottom: 2.5,
   },
   link: {
-    fontSize: 9.5,
+    fontSize: 10.1,
     color: '#374151',
     textDecoration: 'none',
     marginBottom: 2.5,
@@ -54,28 +54,28 @@ const styles = StyleSheet.create({
 
   // SECTION
   sectionTitle: {
-    fontSize: 10.5,
+    fontSize: 11,
     fontFamily: 'Helvetica-Bold',
     letterSpacing: 1.5,
     textTransform: 'uppercase',
     color: '#111827',
     borderBottomWidth: 1,
     borderBottomColor: '#4B5563',
-    paddingBottom: 2,
-    marginBottom: 6,
-    marginTop: 10,
+    paddingBottom: 3,
+    marginBottom: 5.5,
+    marginTop: 8,
   },
 
   // SUMMARY
   summaryText: {
-    fontSize: 9.5,
+    fontSize: 10.5,
     color: '#1F2937',
-    lineHeight: 1.6,
+    lineHeight: 1.5,
   },
 
   // SKILLS
   skillsText: {
-    fontSize: 9.5,
+    fontSize: 10.5,
     color: '#111827',
     lineHeight: 1.5,
   },
@@ -84,22 +84,23 @@ const styles = StyleSheet.create({
   itemHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: 3,
+    marginBottom: 2.2,
+    paddingBottom: 2.2,
   },
   itemTitle: {
-    fontSize: 10.5,
+    fontSize: 11,
     fontFamily: 'Helvetica-Bold',
     color: '#1F2937',
   },
   itemSubtitle: {
-    fontSize: 9.5,
+    fontSize: 10.5,
     color: '#4B5563',
   },
   bullet: {
-    fontSize: 9.5,
+    fontSize: 10.5,
     color: '#1F2937',
     marginLeft: 8,
-    marginBottom: 2,
+    marginBottom: 2.2,
     lineHeight: 1.5,
   },
   itemWrapper: {
