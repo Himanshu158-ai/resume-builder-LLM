@@ -24,7 +24,7 @@ export default function PersonalInfo({ data, setData }) {
             Full name
           </label>
           <input
-            required
+            aria-required
             className={inputStyle}
             value={data.personalInfo.name}
             onChange={e => update("name", e.target.value)}
@@ -41,7 +41,7 @@ export default function PersonalInfo({ data, setData }) {
             className={inputStyle}
             value={data.personalInfo.email}
             onChange={e => update("email", e.target.value)}
-            placeholder="you@email.com"
+            placeholder="your@email.com"
           />
         </div>
 

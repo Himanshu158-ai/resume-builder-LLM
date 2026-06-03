@@ -30,7 +30,7 @@ const About = ({ data, setData }) => {
         </label>
 
         <textarea
-          required
+          aria-required
           className={`${inputStyle} min-h-[90px]`}
           value={data.aboutMe?.[0]?.about || ""}
           onChange={e =>
