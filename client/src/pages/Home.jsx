@@ -30,7 +30,7 @@ export default function HomePage() {
             {/* Subtle accent glow — much more restrained than before */}
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[1px] bg-gradient-to-r from-transparent via-indigo-500/30 to-transparent" />
 
-            <div className="max-w-7xl mx-auto px-6 md:px-10 py-14 md:py-24 grid md:grid-cols-2 gap-12 md:gap-16 items-center relative z-10">
+            <div className="max-w-7xl mx-auto px-6 md:px-10 py-14 md:py-10 grid md:grid-cols-2 gap-12 md:gap-16 items-center relative z-10">
 
                 {/* LEFT */}
                 <div className="text-center md:text-left">
@@ -114,9 +114,9 @@ export default function HomePage() {
                         {/* Float badge — top right */}
                         <div className="absolute -top-3 -right-3 bg-[#18181B] border border-white/[0.10] rounded-xl px-3 py-2 flex items-center gap-2">
                             <div className="w-16 h-1 bg-white/[0.08] rounded overflow-hidden">
-                                <div className="h-full w-[92%] bg-emerald-500 rounded" />
+                                <div className="h-full w-[90%] bg-emerald-500 rounded" />
                             </div>
-                            <span className="text-[11px] text-emerald-400 font-semibold">ATS 92</span>
+                            <span className="text-[11px] text-emerald-400 font-semibold">ATS 90</span>
                         </div>
 
                     </div>
@@ -125,7 +125,7 @@ export default function HomePage() {
             </div>
             {/* ───── HOW IT WORKS + FEATURES SECTION ───── */}
             <div className="bg-[#0A0A0A]">
-                <div className="max-w-7xl mx-auto px-6 md:px-10 py-20 md:py-28">
+                <div className="max-w-7xl mx-auto px-6 md:px-10 py-20 md:py-12">
 
                     {/* Section label */}
                     <div className="inline-flex items-center gap-2 bg-indigo-500/[0.08] border border-indigo-500/20 px-3 py-1.5 rounded-full mb-4">
@@ -195,7 +195,7 @@ export default function HomePage() {
                                     </div>
                                     <p className="text-[13px] font-semibold text-white tracking-tight mb-1.5">{title}</p>
                                     <p className="text-[11px] text-[#71717A] leading-relaxed mb-3">{desc}</p>
-                                    <span className={`text-[10px] font-medium ${colors.tagBg} border px-2 py-0.5 rounded`}>{tag}</span>
+                                    <span className={`text-[10px] font-medium text-white`}>{tag}</span>
                                 </div>
                             );
                         })}
