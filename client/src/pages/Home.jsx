@@ -125,9 +125,9 @@ export default function HomePage() {
             </div>
             {/* ───── HOW IT WORKS + FEATURES SECTION ───── */}
             <div className="bg-[#0A0A0A]">
-                <div className="max-w-7xl mx-auto px-6 md:px-10 py-20 md:py-12">
+                <div className="max-w-7xl mx-auto px-6 md:px-10 py-20 md:py-16">
 
-                    {/* Section label */}
+                    {/* ── SECTION HEADER ── */}
                     <div className="inline-flex items-center gap-2 bg-indigo-500/[0.08] border border-indigo-500/20 px-3 py-1.5 rounded-full mb-4">
                         <span className="text-[11px] font-medium text-indigo-300 tracking-widest uppercase">How it works</span>
                     </div>
@@ -135,27 +135,26 @@ export default function HomePage() {
                         From idea to resume<br />in four steps
                     </h2>
                     <p className="text-[#71717A] text-sm leading-relaxed max-w-[480px] mb-12">
-                        No templates to fill. No guesswork. Just describe what you've built the agents handle the rest.
+                        No templates to fill. No guesswork. Just describe what you've built — the agents handle the rest.
                     </p>
 
-                    {/* Stats row */}
+                    {/* ── STATS ── */}
                     <div className="flex gap-8 mb-14 flex-wrap">
                         {[
-                            { num: "~30s", label: "Average generation time" },
+                            { num: "<30s", label: "Average generation time" },
                             { num: "4", label: "Parallel AI agents" },
-                            { num: "80%", label: "Average ATS score" },
+                            { num: "25+", label: "Resumes generated" },
+                            { num: "+80%", label: "Average ATS score" },
                         ].map(({ num, label }) => (
                             <div key={label}>
-                                <p className="text-[28px] font-bold text-white tracking-tight leading-none">
-                                    <span className="text-indigo-400">{num}</span>
-                                </p>
+                                <p className="text-[28px] font-bold tracking-tight leading-none text-indigo-400">{num}</p>
                                 <p className="text-[11px] text-[#71717A] mt-1">{label}</p>
                             </div>
                         ))}
                     </div>
 
-                    {/* Steps */}
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-2 rounded-2xl overflow-hidden mb-px">
+                    {/* ── STEPS ── */}
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-2 rounded-2xl overflow-hidden mb-16">
                         {[
                             { num: "01", icon: <User size={15} />, title: "Enter your details", desc: "Fill in your name, role, experience, projects, and skills. Plain language works fine." },
                             { num: "02", icon: <Cpu size={15} />, title: "Agents go to work", desc: "Four specialized AI agents run in parallel Summary, Projects, Experience, and ATS Evaluator." },
@@ -173,8 +172,19 @@ export default function HomePage() {
                         ))}
                     </div>
 
-                    {/* Features grid */}
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-2 rounded-2xl overflow-hidden mt-10">
+                    {/* ── FEATURES HEADER ── */}
+                    <div className="inline-flex items-center gap-2 bg-white/[0.04] border border-white/[0.08] px-3 py-1.5 rounded-full mb-4">
+                        <span className="text-[11px] font-medium text-[#A1A1AA] tracking-widest uppercase">Features</span>
+                    </div>
+                    <h2 className="text-2xl md:text-[28px] font-bold text-white tracking-tight leading-[1.2] mb-3">
+                        Everything you need,<br />nothing you don't
+                    </h2>
+                    <p className="text-[#71717A] text-sm leading-relaxed max-w-[480px] mb-8">
+                        Built specifically for developers and freshers entering the job market.
+                    </p>
+
+                    {/* ── FEATURES GRID ── */}
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-2 rounded-2xl overflow-hidden">
                         {[
                             { color: "indigo", icon: <Sparkles size={14} />, tag: "LangGraph", title: "Multi-agent generation", desc: "Summary, Projects, and Experience written by dedicated agents simultaneously faster and more coherent than single-pass AI." },
                             { color: "green", icon: <BarChart2 size={14} />, tag: "Live feedback", title: "ATS score analysis", desc: "A fourth agent evaluates keyword density, section structure, and readability giving you an actionable score." },
@@ -195,13 +205,13 @@ export default function HomePage() {
                                     </div>
                                     <p className="text-[13px] font-semibold text-white tracking-tight mb-1.5">{title}</p>
                                     <p className="text-[11px] text-[#71717A] leading-relaxed mb-3">{desc}</p>
-                                    <span className={`text-[10px] font-medium text-white`}>{tag}</span>
+                                    <span className={`text-[10px] font-light text-${colors.tagBg}`}>{tag}</span>
                                 </div>
                             );
                         })}
                     </div>
 
-                    {/* Bottom CTA strip */}
+                    {/* ── BOTTOM CTA ── */}
                     <div className="mt-12 bg-[#111111] border border-white/[0.07] rounded-2xl px-8 py-7 flex items-center justify-between gap-6 flex-wrap">
                         <div>
                             <p className="text-[15px] font-semibold text-white tracking-tight mb-1">Ready to build yours?</p>
