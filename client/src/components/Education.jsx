@@ -6,81 +6,44 @@ export default function Education({ data, setData }) {
     }));
   };
 
-  const inputStyle =
-    "w-full px-3 py-2.5 rounded-lg " +
-    "bg-white/80 backdrop-blur-md " +
-    "border border-gray-200 " +
-    "text-gray-800 placeholder-gray-400 " +
-    "focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent " +
-    "transition";
+  const inputStyle = "w-full bg-[#0A0A0A] border border-white/[0.08] hover:border-white/[0.14] focus:border-indigo-500/60 focus:ring-1 focus:ring-indigo-500/30 rounded-xl px-4 py-3 text-sm text-white placeholder:text-[#71717A] outline-none transition-all duration-200";
 
   return (
     <div className="grid md:grid-cols-2 gap-4">
 
-      <div className="flex flex-col gap-1">
-        <label className="text-sm font-medium text-gray-700">
-          College / University
-        </label>
-        <input
-          required
-          className={inputStyle}
-          value={data.education.college}
-          onChange={e => update("college", e.target.value)}
-          placeholder="IIT Delhi"
-        />
-      </div>
-
-      <div className="flex flex-col gap-1">
-        <label className="text-sm font-medium text-gray-700">
-          Degree
-        </label>
-        <input
-          required
-          className={inputStyle}
-          value={data.education.degree}
-          onChange={e => update("degree", e.target.value)}
-          placeholder="B.Tech"
-        />
-      </div>
-
-      <div className="flex flex-col gap-1">
-        <label className="text-sm font-medium text-gray-700">
-          Branch
-        </label>
-        <input
-          required
-          className={inputStyle}
-          value={data.education.branch}
-          onChange={e => update("branch", e.target.value)}
-          placeholder="Computer Science"
-        />
-      </div>
-
-      <div className="flex flex-col gap-1">
-        <label className="text-sm font-medium text-gray-700">
-          Year
-        </label>
-        <input
-          required
-          className={inputStyle}
-          value={data.education.year}
-          onChange={e => update("year", e.target.value)}
-          placeholder="2022 - 2026"
-        />
-      </div>
-
-      <div className="flex flex-col gap-1 md:col-span-2">
-        <label className="text-sm font-medium text-gray-700">
-          CGPA / Percentage
-        </label>
-        <input
-          className={inputStyle}
-          value={data.education.cgpa}
-          onChange={e => update("cgpa", e.target.value)}
-          placeholder="8.5 / 10"
-        />
-      </div>
-
+  {[
+    { label: "College / University", key: "college", placeholder: "IIT Delhi", required: true },
+    { label: "Degree", key: "degree", placeholder: "B.Tech", required: true },
+    { label: "Branch", key: "branch", placeholder: "Computer Science", required: true },
+    { label: "Year", key: "year", placeholder: "2022 – 2026", required: true },
+  ].map(({ label, key, placeholder, required }) => (
+    <div key={key} className="flex flex-col gap-2">
+      <label className="text-[12px] font-medium text-[#A1A1AA] uppercase tracking-widest">
+        {label}
+      </label>
+      <input
+        required={required}
+        className={inputStyle}
+        value={data.education[key]}
+        onChange={e => update(key, e.target.value)}
+        placeholder={placeholder}
+      />
     </div>
+  ))}
+
+  <div className="flex flex-col gap-2 md:col-span-2">
+    <label className="text-[12px] font-medium text-[#A1A1AA] uppercase tracking-widest flex items-center gap-2">
+      CGPA / Percentage
+      <span className="normal-case tracking-normal text-[11px] text-[#71717A] font-normal border border-white/[0.08] px-2 py-0.5 rounded-md">Optional</span>
+    </label>
+    <input
+      className={inputStyle}
+      value={data.education.cgpa}
+      onChange={e => update("cgpa", e.target.value)}
+      placeholder="8.5 / 10"
+    />
+  </div>
+
+</div>
   );
 }

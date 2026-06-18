@@ -24,65 +24,70 @@ export default function Skills({ data, setData }) {
     }));
   };
 
-  const inputStyle =
-    "w-full px-3 py-2.5 rounded-lg " +
-    "bg-white/80 backdrop-blur-md " +
-    "border border-gray-200 " +
-    "text-gray-800 placeholder-gray-400 " +
-    "focus:outline-none focus:ring-2 focus:ring-blue-500 " +
-    "transition";
+  const inputStyle = "w-full bg-[#0A0A0A] border border-white/[0.08] hover:border-white/[0.14] focus:border-indigo-500/60 focus:ring-1 focus:ring-indigo-500/30 rounded-xl px-4 py-3 text-sm text-white placeholder:text-[#71717A] outline-none transition-all duration-200";
 
   return (
     <div className="space-y-4">
 
-      <div className="flex gap-2">
-        <input
-          required
-          className={`${inputStyle} flex-1`}
-          value={input}
-          onChange={e => setInput(e.target.value)}
-          onKeyDown={e => e.key === "Enter" && addSkill()}
-          placeholder="React, Node.js, MongoDB"
-        />
+  {/* Input row */}
+  <div className="flex gap-2">
+    <input
+      required
+      className={`${inputStyle} flex-1`}
+      value={input}
+      onChange={e => setInput(e.target.value)}
+      onKeyDown={e => e.key === "Enter" && addSkill()}
+      placeholder="Type a skill and press Enter or Add..."
+    />
+    <button
+      onClick={addSkill}
+      className="inline-flex items-center gap-1.5 px-4 py-2.5
+        bg-indigo-600 hover:bg-indigo-500
+        text-white text-[13px] font-semibold
+        rounded-xl transition-all duration-200
+        whitespace-nowrap"
+    >
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+        <path d="M12 5v14M5 12h14"/>
+      </svg>
+      Add
+    </button>
+  </div>
 
-        <button
-          onClick={addSkill}
-          className="bg-white/40 backdrop-blur-lg 
-          border border-white/40 
-          px-4 py-2 
-          rounded-lg 
-          text-sm 
-          hover:bg-white/60 
-          transition"
+  {/* Skills tags */}
+  {data.skills.length > 0 && (
+    <div className="flex flex-wrap gap-2 pt-1">
+      {data.skills.map((skill, i) => (
+        <span
+          key={i}
+          className="inline-flex items-center gap-2
+            bg-indigo-500/[0.08] hover:bg-indigo-500/[0.12]
+            border border-indigo-500/[0.18]
+            text-indigo-300 text-[12px] font-medium
+            px-3 py-1.5 rounded-lg
+            transition-all duration-200"
         >
-          + Add
-        </button>
-      </div>
-
-      <div className="flex flex-wrap gap-2">
-        {data.skills.map((skill, i) => (
-          <span
-            key={i}
-            className="inline-flex items-center gap-2 
-            bg-gradient-to-r from-blue-500/10 to-indigo-500/10
-            border border-blue-200/40
-            text-gray-800
-            text-xs px-3 py-1.5 
-            rounded-full 
-            backdrop-blur-md"
+          {skill}
+          <button
+            onClick={() => removeSkill(i)}
+            className="text-indigo-400/60 hover:text-red-400 transition-colors duration-200 leading-none"
           >
-            {skill}
-
-            <button
-              onClick={() => removeSkill(i)}
-              className="text-blue-500 hover:text-red-500 transition"
-            >
-              ×
-            </button>
-          </span>
-        ))}
-      </div>
-
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+              <path d="M18 6L6 18M6 6l12 12"/>
+            </svg>
+          </button>
+        </span>
+      ))}
     </div>
+  )}
+
+  {/* Empty state */}
+  {data.skills.length === 0 && (
+    <p className="text-[12px] text-[#71717A] pl-1">
+      No skills added yet type above and hit Add or Enter.
+    </p>
+  )}
+
+</div>
   );
 }

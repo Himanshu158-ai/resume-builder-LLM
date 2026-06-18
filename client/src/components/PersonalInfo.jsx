@@ -6,99 +6,40 @@ export default function PersonalInfo({ data, setData }) {
     }));
   };
 
-  const inputStyle =
-    "w-full px-3 py-2.5 rounded-lg " +
-    "bg-white/80 backdrop-blur-md " +
-    "border border-gray-200 " +
-    "text-gray-800 placeholder-gray-400 " +
-    "focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent " +
-    "transition";
+  const inputStyle = "w-full bg-[#0A0A0A] border border-white/[0.08] hover:border-white/[0.14] focus:border-indigo-500/60 focus:ring-1 focus:ring-indigo-500/30 rounded-xl px-4 py-3 text-sm text-white placeholder:text-[#71717A] outline-none transition-all duration-200";
 
   return (
     <div className="space-y-4">
+  <div className="grid md:grid-cols-2 gap-4">
 
-      <div className="grid md:grid-cols-2 gap-4">
-
-        <div className="flex flex-col gap-1">
-          <label className="text-sm font-medium text-gray-700">
-            Full name
-          </label>
-          <input
-            aria-required
-            className={inputStyle}
-            value={data.personalInfo.name}
-            onChange={e => update("name", e.target.value)}
-            placeholder="Himanshu Singh"
-          />
-        </div>
-
-        <div className="flex flex-col gap-1">
-          <label className="text-sm font-medium text-gray-700">
-            Email
-          </label>
-          <input
-            required
-            className={inputStyle}
-            value={data.personalInfo.email}
-            onChange={e => update("email", e.target.value)}
-            placeholder="your@email.com"
-          />
-        </div>
-
-        <div className="flex flex-col gap-1">
-          <label className="text-sm font-medium text-gray-700">
-            Phone
-          </label>
-          <input
-            required
-            className={inputStyle}
-            value={data.personalInfo.phone}
-            onChange={e => update("phone", e.target.value)}
-            placeholder="+91 XXXXX XXXXX"
-          />
-        </div>
-
-        <div className="flex flex-col gap-1">
-          <label className="text-sm font-medium text-gray-700">
-            Location
-          </label>
-          <input
-            required
-            className={inputStyle}
-            value={data.personalInfo.location}
-            onChange={e => update("location", e.target.value)}
-            placeholder="Delhi, India"
-          />
-        </div>
-
-        <div className="flex flex-col gap-1">
-          <label className="text-sm font-medium text-gray-700">
-            LinkedIn
-          </label>
-          <input
-            required
-            className={inputStyle}
-            value={data.personalInfo.linkedin}
-            onChange={e => update("linkedin", e.target.value)}
-            placeholder="linkedin.com/in/..."
-          />
-        </div>
-
-        <div className="flex flex-col gap-1">
-          <label className="text-sm font-medium text-gray-700">
-            GitHub
-          </label>
-          <input
-            required
-            className={inputStyle}
-            value={data.personalInfo.github}
-            onChange={e => update("github", e.target.value)}
-            placeholder="github.com/..."
-          />
-        </div>
-
+    {[
+      { label: "Full Name",  key: "name",     placeholder: "Himanshu Singh",     required: true  },
+      { label: "Email",      key: "email",    placeholder: "your@email.com",     required: true  },
+      { label: "Phone",      key: "phone",    placeholder: "+91 XXXXX XXXXX",    required: true  },
+      { label: "Location",   key: "location", placeholder: "Delhi, India",       required: true  },
+      { label: "LinkedIn",   key: "linkedin", placeholder: "linkedin.com/in/...", required: true },
+      { label: "GitHub",     key: "github",   placeholder: "github.com/...",     required: true },
+    ].map(({ label, key, placeholder, required }) => (
+      <div key={key} className="flex flex-col gap-2">
+        <label className="text-[12px] font-medium text-[#A1A1AA] uppercase tracking-widest flex items-center gap-2">
+          {label}
+          {!required && (
+            <span className="normal-case tracking-normal text-[11px] text-[#71717A] font-normal border border-white/[0.08] px-2 py-0.5 rounded-md">
+              Optional
+            </span>
+          )}
+        </label>
+        <input
+          required={required}
+          className={inputStyle}
+          value={data.personalInfo[key]}
+          onChange={e => update(key, e.target.value)}
+          placeholder={placeholder}
+        />
       </div>
+    ))}
 
-    </div>
+  </div>
+</div>
   );
 }

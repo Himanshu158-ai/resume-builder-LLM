@@ -24,100 +24,89 @@ export default function Projects({ data, setData }) {
     }));
   };
 
-  const inputStyle =
-    "w-full px-3 py-2.5 rounded-lg " +
-    "bg-white/80 backdrop-blur-md " +
-    "border border-gray-200 " +
-    "text-gray-800 placeholder-gray-400 " +
-    "focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent " +
-    "transition";
+  const inputStyle = "w-full bg-[#0A0A0A] border border-white/[0.08] hover:border-white/[0.14] focus:border-indigo-500/60 focus:ring-1 focus:ring-indigo-500/30 rounded-xl px-4 py-3 text-sm text-white placeholder:text-[#71717A] outline-none transition-all duration-200";
 
   return (
     <div className="space-y-5">
 
-      {data.projects.map((p, i) => (
-        <div
-          key={i}
-          className="bg-white/40 backdrop-blur-xl 
-          border border-white/40 
-          rounded-xl p-5 space-y-4"
-        >
-
-          <div className="flex justify-between items-center">
-            <span className="text-sm font-medium text-gray-600">
-              Project {i + 1}
-            </span>
-
-            {data.projects.length > 1 && (
-              <button
-                onClick={() => removeProject(i)}
-                className="text-xs text-red-500 hover:text-red-600"
-              >
-                Remove
-              </button>
-            )}
+  {data.projects.map((p, i) => (
+    <div
+      key={i}
+      className="bg-[#111111] border border-white/[0.08] rounded-2xl p-6 space-y-5"
+    >
+      {/* Card header */}
+      <div className="flex justify-between items-center pb-4 border-b border-white/[0.06]">
+        <div className="flex items-center gap-2">
+          <div className="w-5 h-5 rounded-md bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center">
+            <span className="text-[10px] text-indigo-400 font-semibold">{i + 1}</span>
           </div>
+          <span className="text-[12px] font-medium text-[#A1A1AA] uppercase tracking-widest">
+            Project {i + 1}
+          </span>
+        </div>
 
-          <div className="grid md:grid-cols-2 gap-3">
+        {data.projects.length > 1 && (
+          <button
+            onClick={() => removeProject(i)}
+            className="text-[11px] text-[#71717A] hover:text-red-400 border border-white/[0.06] hover:border-red-500/20 px-2.5 py-1 rounded-lg transition-all duration-200"
+          >
+            Remove
+          </button>
+        )}
+      </div>
 
-            <div className="flex flex-col gap-1">
-              <label className="text-sm font-medium text-gray-700">
-                Project name
-              </label>
-              <input
-                required
-                className={inputStyle}
-                value={p.name}
-                onChange={e => update(i, "name", e.target.value)}
-                placeholder="AI Resume Builder"
-              />
-            </div>
-
-            <div className="flex flex-col gap-1">
-              <label className="text-sm font-medium text-gray-700">
-                Tech stack
-              </label>
-              <input
-                required
-                className={inputStyle}
-                value={p.techStack}
-                onChange={e => update(i, "techStack", e.target.value)}
-                placeholder="React, Node.js, Tailwind"
-              />
-            </div>
-
-          </div>
-
-          <div className="flex flex-col gap-1">
-            <label className="text-sm font-medium text-gray-700">
-              Description
+      {/* Fields */}
+      <div className="grid md:grid-cols-2 gap-4">
+        {[
+          { label: "Project Name", key: "name",      placeholder: "AI Resume Builder"        },
+          { label: "Tech Stack",   key: "techStack",  placeholder: "React, Node.js, Tailwind" },
+        ].map(({ label, key, placeholder }) => (
+          <div key={key} className="flex flex-col gap-2">
+            <label className="text-[12px] font-medium text-[#A1A1AA] uppercase tracking-widest">
+              {label}
             </label>
-
-            <textarea
+            <input
               required
-              className={`${inputStyle} min-h-[80px]`}
-              value={p.description}
-              onChange={e => update(i, "description", e.target.value)}
-              placeholder="Describe what you built..."
+              className={inputStyle}
+              value={p[key]}
+              onChange={e => update(i, key, e.target.value)}
+              placeholder={placeholder}
             />
           </div>
+        ))}
+      </div>
 
-        </div>
-      ))}
-
-      <button
-        onClick={addProject}
-        className="bg-white/40 backdrop-blur-lg 
-        border border-white/40 
-        px-4 py-2 
-        rounded-lg 
-        text-sm 
-        hover:bg-white/60 
-        transition"
-      >
-        + Add project
-      </button>
+      <div className="flex flex-col gap-2">
+        <label className="text-[12px] font-medium text-[#A1A1AA] uppercase tracking-widest">
+          Description
+        </label>
+        <textarea
+          required
+          className={`${inputStyle} min-h-[90px] resize-none`}
+          value={p.description}
+          onChange={e => update(i, "description", e.target.value)}
+          placeholder="Describe what you built and the impact it had..."
+        />
+      </div>
 
     </div>
+  ))}
+
+  {/* Add button */}
+  <button
+    onClick={addProject}
+    className="w-full flex items-center justify-center gap-2 px-4 py-3
+      bg-white/[0.03] hover:bg-white/[0.06]
+      border border-dashed border-white/[0.10] hover:border-indigo-500/30
+      text-[12px] text-[#71717A] hover:text-indigo-400
+      rounded-xl transition-all duration-200"
+  >
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+      <path d="M12 5v14M5 12h14"/>
+    </svg>
+    Add project
+  </button>
+
+</div>
   );
 }

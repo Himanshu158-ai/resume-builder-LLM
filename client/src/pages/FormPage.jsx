@@ -57,107 +57,109 @@ export default function FormPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 py-16 px-4">
-      {loading?(<Loader/>):(
-        <div className="max-w-2xl mx-auto">
+    <div className="min-h-screen bg-[#0A0A0A] py-16 px-4">
+  {loading ? (<Loader />) : (
+    <div className="max-w-2xl mx-auto">
 
-        {/* heading */}
-        <h1 className="text-3xl font-semibold mb-2 text-gray-800">
+      {/* Heading */}
+      <div className="mb-10">
+        <div className="inline-flex items-center gap-2 bg-indigo-500/[0.08] border border-indigo-500/20 px-3 py-1.5 rounded-full mb-5">
+          <span className="text-[11px] font-medium text-indigo-300 tracking-widest uppercase">Resume Builder</span>
+        </div>
+        <h1 className="text-3xl md:text-4xl font-bold text-white tracking-tight leading-tight mb-3">
           Build your resume
         </h1>
+        <p className="text-[#71717A] text-sm leading-relaxed">
+          Describe yourself — our agents build your resume from your actual achievements.
+        </p>
+      </div>
 
-        <p className="text-gray-500 mb-8">
-          Describe yourself our agent builds your resume from your actual achievements
+      {/* Progress bar */}
+      <div className="flex gap-1.5 mb-10">
+        {steps.map((_, i) => (
+          <div
+            key={i}
+            className={`h-1 flex-1 rounded-full transition-all duration-500
+              ${i < current
+                ? "bg-indigo-500"
+                : i === current
+                  ? "bg-indigo-400/60"
+                  : "bg-white/[0.08]"
+              }`}
+          />
+        ))}
+      </div>
+
+      {/* Card */}
+      <div className="bg-[#111111] border border-white/[0.08] rounded-2xl p-8 mb-6">
+
+        {/* Step label */}
+        <p className="text-[10px] uppercase tracking-[0.12em] text-indigo-400 font-semibold mb-1">
+          Step {current + 1} of {steps.length}
+        </p>
+        <p className="text-[13px] font-medium text-[#A1A1AA] mb-7 pb-6 border-b border-white/[0.06]">
+          {steps[current]}
         </p>
 
-        {/* progress */}
-        <div className="flex gap-2 mb-8">
-          {steps.map((_, i) => (
-            <div
-              key={i}
-              className={`h-2 flex-1 rounded-full transition-all duration-300 
-              ${i < current
-                  ? "bg-gradient-to-r from-blue-500 to-indigo-500"
-                  : i === current
-                    ? "bg-blue-400"
-                    : "bg-gray-200"
-                }`}
-            />
-          ))}
-        </div>
-
-        {/* glass card */}
-        <div className="bg-white/40 backdrop-blur-xl 
-        border border-white/40 
-        rounded-2xl 
-        p-7 
-        shadow-[0_8px_30px_rgba(0,0,0,0.08)]
-        mb-6">
-
-          <p className="text-xs uppercase tracking-widest 
-          text-gray-400 font-medium mb-5">
-            {steps[current]}
-          </p>
-
-          {sections[current]}
-        </div>
-
-        {/* navigation */}
-        <div className="flex justify-between items-center">
-
-          <button
-            onClick={() => setCurrent(c => c - 1)}
-            className={`px-5 py-2 text-sm 
-            bg-white/40 backdrop-blur-lg
-            border border-white/40 
-            rounded-lg 
-            hover:bg-white/60 
-            transition
-            ${current === 0 ? "invisible" : ""}`}
-          >
-            Back
-          </button>
-
-          <span className="text-sm text-gray-400">
-            Step {current + 1} of {steps.length}
-          </span>
-
-          {current < steps.length - 1 ? (
-            <button
-              onClick={() => setCurrent(c => c + 1)}
-              className="px-6 py-2 text-sm 
-              bg-gradient-to-r from-blue-600 to-indigo-600
-              text-white 
-              rounded-lg 
-              shadow-lg 
-              hover:scale-105 
-              transition"
-            >
-              Next
-            </button>
-          ) : (
-            <button
-              onClick={handleSubmit}
-              disabled={loading}
-              className="px-6 py-2 text-sm 
-              bg-gradient-to-r from-green-500 to-emerald-600
-              text-white 
-              rounded-lg 
-              shadow-lg 
-              hover:scale-105 
-              transition 
-              disabled:opacity-50"
-            >
-              {loading ? "Generating..." : "Generate Resume"}
-            </button>
-          )}
-
-        </div>
+        {sections[current]}
 
       </div>
-      )}
-      
+
+      {/* Navigation */}
+      <div className="flex justify-between items-center">
+
+        <button
+          onClick={() => setCurrent(c => c - 1)}
+          className={`inline-flex items-center gap-2 px-4 py-2.5 text-sm
+            bg-white/[0.04] hover:bg-white/[0.07]
+            border border-white/[0.08]
+            text-[#A1A1AA] hover:text-white
+            rounded-lg transition-all duration-200
+            ${current === 0 ? "invisible" : ""}`}
+        >
+          ← Back
+        </button>
+
+        <span className="text-[12px] text-[#71717A] tabular-nums">
+          {current + 1} / {steps.length}
+        </span>
+
+        {current < steps.length - 1 ? (
+          <button
+            onClick={() => setCurrent(c => c + 1)}
+            className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-semibold
+              bg-indigo-600 hover:bg-indigo-500
+              text-white rounded-lg
+              transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0"
+          >
+            Next →
+          </button>
+        ) : (
+          <button
+            onClick={handleSubmit}
+            disabled={loading}
+            className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-semibold
+              bg-emerald-600 hover:bg-emerald-500
+              text-white rounded-lg
+              transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0
+              disabled:opacity-40 disabled:cursor-not-allowed disabled:translate-y-0"
+          >
+            {loading ? (
+              <>
+                <svg className="animate-spin w-3.5 h-3.5" viewBox="0 0 24 24" fill="none">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/>
+                </svg>
+                Generating...
+              </>
+            ) : "Generate Resume →"}
+          </button>
+        )}
+
+      </div>
 
     </div>
+  )}
+</div>
   );
 }
