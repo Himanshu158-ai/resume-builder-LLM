@@ -5,7 +5,7 @@ import {ChatCohere} from "@langchain/cohere";
 import { config } from "../config/config";
 
 const googleChat = new ChatGoogleGenerativeAI({
-    model:"gemini-flash-latest",
+    model:"gemini-2.0-flash",
     apiKey:config.geminiApiKey
 })
 
