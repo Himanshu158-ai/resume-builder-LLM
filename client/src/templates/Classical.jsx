@@ -80,6 +80,7 @@ const Classical = ({ aboutMe, skills, education, experience, projects, personalI
                 padding: "40px 50px",
                 minHeight: "1123px",
                 fontFamily: "'Inter', 'Arial', sans-serif",
+                transformOrigin: "top center",
             }}
         >
             {/* HEADER */}

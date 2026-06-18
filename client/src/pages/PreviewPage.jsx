@@ -1,5 +1,5 @@
 import { useLocation, useNavigate } from "react-router-dom";
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas-pro";
 import Classical from "../templates/Classical";
@@ -38,6 +38,9 @@ export default function PreviewPage() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [selectedTemplate, setSelectedTemplate] = useState("classical");
 
+
+
+
   if (!resume) {
     return (
       <div className="flex h-screen items-center justify-center text-gray-500 text-sm">
@@ -45,6 +48,27 @@ export default function PreviewPage() {
       </div>
     );
   }
+
+
+  useEffect(() => {
+    const scale = () => {
+      const wrapper = document.getElementById("resume-scale-wrapper");
+      if (!wrapper) return;
+      const parent = wrapper.parentElement;
+      const availableWidth = parent.clientWidth - 32;
+      const s = Math.min(1, availableWidth / 794);
+      const originalHeight = wrapper.scrollHeight;
+
+      wrapper.style.transform = `scale(${s})`;
+      wrapper.style.transformOrigin = "top center";
+      wrapper.style.width = "794px";
+      wrapper.style.marginBottom = `-${originalHeight - originalHeight * s}px`;
+    };
+
+    scale();
+    window.addEventListener("resize", scale);
+    return () => window.removeEventListener("resize", scale);
+  }, []);
 
   const {
     personalInfo,
@@ -77,33 +101,31 @@ export default function PreviewPage() {
 
 
   return (
-    <div className="flex flex-col lg:flex-row h-screen bg-gray-100 font-sans overflow-hidden">
+    <div className="flex flex-col lg:flex-row h-screen bg-[#0A0A0A] font-sans overflow-hidden">
 
       {/* ── MOBILE TOP BAR ── */}
-      <div className="lg:hidden flex items-center justify-between bg-white border-b border-gray-200 px-4 py-3 sticky top-0 z-30 shadow-sm">
-        <span className="font-semibold text-gray-800 text-sm">Resume Preview</span>
+      <div className="lg:hidden flex items-center justify-between bg-[#111111] border-b border-white/[0.08] px-4 py-3 sticky top-0 z-30">
+        <div className="flex items-center gap-2">
+          <div className="w-1.5 h-1.5 rounded-full bg-indigo-400" />
+          <span className="font-semibold text-white text-sm tracking-tight">Resume Preview</span>
+        </div>
         <div className="flex gap-2">
           <PDFDownloadLink
             document={
               <ClassicalPDF
-                aboutMe={aboutMe}
-                skills={skills}
-                education={education}
-                experience={experience}
-                projects={projects}
-                personalInfo={personalInfo}
-                isFresher={isFresher}
-                jobTitle={jobTitle}
+                aboutMe={aboutMe} skills={skills} education={education}
+                experience={experience} projects={projects}
+                personalInfo={personalInfo} isFresher={isFresher} jobTitle={jobTitle}
               />
             }
             fileName={`${personalInfo?.name?.replace(/\s+/g, "_") || "resume"}.pdf`}
-            className="text-xs bg-indigo-600 text-white px-3 py-1.5 rounded-md hover:bg-indigo-700 transition-colors shadow-sm font-medium flex items-center"
+            className="text-[12px] bg-indigo-600 hover:bg-indigo-500 text-white px-3 py-1.5 rounded-lg transition-colors font-medium flex items-center gap-1.5"
           >
-            {({ loading }) => loading ? 'Generating...' : 'Download PDF'}
+            {({ loading }) => loading ? 'Generating...' : '↓ Download'}
           </PDFDownloadLink>
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="text-xs bg-gray-900 text-white px-3 py-1.5 rounded-md"
+            className="text-[12px] bg-white/[0.06] hover:bg-white/[0.10] border border-white/[0.08] text-[#A1A1AA] px-3 py-1.5 rounded-lg transition-all"
           >
             {sidebarOpen ? "Close" : "Menu"}
           </button>
@@ -111,38 +133,75 @@ export default function PreviewPage() {
       </div>
 
       {/* ── LEFT: RESUME PREVIEW ── */}
-      <div className="flex-1 overflow-y-auto px-3 py-5 lg:px-6 lg:py-8">
-        <div ref={resumeRef}>
-          <TemplateRenderer id={selectedTemplate} props={templateProps} />
+      <div className="flex-1 bg-[#0A0A0A] flex flex-col min-h-0">
+
+        <div className="hidden md:flex items-center gap-2 px-10 pt-8 pb-4 shrink-0 justify-center align-center">
+          <div className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+          <span className="text-[11px] text-[#71717A] uppercase tracking-widest font-medium">
+            Live Preview
+          </span>
         </div>
+
+        {/* Outer: clips horizontal overflow strictly */}
+        <div
+          className="flex-1 overflow-y-auto pb-8 pt-2"
+          style={{ overflowX: "clip" }}
+        >
+          {/* Center wrapper */}
+          <div style={{ display: "flex", justifyContent: "center" }}>
+            <div id="resume-scale-wrapper" style={{ width: "794px", flexShrink: 0 }}>
+              <div ref={resumeRef}>
+                <TemplateRenderer id={selectedTemplate} props={templateProps} />
+              </div>
+            </div>
+          </div>
+        </div>
+
       </div>
 
       {/* ── RIGHT SIDEBAR ── */}
       <div
         className={`
-          fixed bottom-0 left-0 right-0 z-20 bg-[#f8f9fb] border-t border-gray-200
-          transition-transform duration-300 ease-in-out
-          ${sidebarOpen ? "translate-y-0" : "translate-y-full"}
-          lg:static lg:translate-y-0 lg:w-72 lg:border-t-0 lg:border-l lg:border-gray-200
-          lg:flex lg:flex-col lg:overflow-y-auto
-          max-h-[80vh] lg:max-h-full overflow-y-auto
-        `}
+        fixed bottom-0 left-0 right-0 z-20
+        bg-[#111111] border-t border-white/[0.08]
+        transition-transform duration-300 ease-in-out
+        ${sidebarOpen ? "translate-y-0" : "translate-y-full"}
+        lg:static lg:translate-y-0 lg:w-72
+        lg:border-t-0 lg:border-l lg:border-white/[0.06]
+        lg:flex lg:flex-col lg:overflow-y-auto
+        max-h-[85vh] lg:max-h-full overflow-y-auto
+      `}
       >
-        <div className="flex flex-col gap-4 p-5">
+        <div className="flex flex-col gap-3 p-5">
+
+          {/* Header */}
+          <div className="pb-4 border-b border-white/[0.06] mb-1">
+            <p className="text-[11px] text-[#71717A] uppercase tracking-widest font-medium">Controls</p>
+          </div>
 
           {/* ATS Score Card */}
-          <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
-            <p className="text-[11px] text-gray-400 tracking-widest uppercase mb-1">ATS Score</p>
-            <div className="flex items-baseline gap-1">
-              <span className="text-4xl font-bold text-gray-900">{finalReview}</span>
-              <span className="text-sm text-gray-400">/10</span>
+          <div className="bg-[#0A0A0A] border border-white/[0.08] rounded-xl p-4">
+            <p className="text-[10px] text-[#71717A] tracking-widest uppercase mb-3 font-medium">ATS Score</p>
+            <div className="flex items-baseline gap-1.5 mb-3">
+              <span className="text-4xl font-bold text-white tracking-tight">{finalReview}</span>
+              <span className="text-sm text-[#71717A]">/10</span>
+              <span className={`ml-auto text-[11px] font-semibold px-2 py-0.5 rounded-md
+              ${finalReview >= 8
+                  ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
+                  : finalReview >= 6
+                    ? "bg-amber-400/10 text-amber-400 border border-amber-400/20"
+                    : "bg-red-500/10 text-red-400 border border-red-500/20"
+                }`}
+              >
+                {finalReview >= 8 ? "Strong" : finalReview >= 6 ? "Good" : "Weak"}
+              </span>
             </div>
-            <div className="h-1.5 bg-gray-100 rounded-full mt-3 overflow-hidden">
+            <div className="h-1 bg-white/[0.06] rounded-full overflow-hidden">
               <div
-                className="h-1.5 rounded-full transition-all duration-500"
+                className="h-1 rounded-full transition-all duration-700"
                 style={{
                   width: `${scorePercent}%`,
-                  background: "linear-gradient(90deg, #1D9E75, #22c55e)",
+                  background: finalReview >= 8 ? "#22c55e" : finalReview >= 6 ? "#f59e0b" : "#ef4444",
                 }}
               />
             </div>
@@ -151,7 +210,11 @@ export default function PreviewPage() {
           {/* Edit Button */}
           <button
             onClick={() => setIsEditing(!isEditing)}
-            className="w-full py-2.5 bg-gray-900 text-white rounded-lg text-sm font-medium hover:bg-gray-700 transition-colors cursor-pointer"
+            className={`w-full py-2.5 rounded-xl text-[13px] font-semibold transition-all duration-200 cursor-pointer
+            ${isEditing
+                ? "bg-emerald-600 hover:bg-emerald-500 text-white"
+                : "bg-white/[0.06] hover:bg-white/[0.10] border border-white/[0.08] text-[#A1A1AA] hover:text-white"
+              }`}
           >
             {isEditing ? "✓ Save Changes" : "✎ Edit Resume"}
           </button>
@@ -160,55 +223,57 @@ export default function PreviewPage() {
           <PDFDownloadLink
             document={
               <ClassicalPDF
-                aboutMe={aboutMe}
-                skills={skills}
-                education={education}
-                experience={experience}
-                projects={projects}
-                personalInfo={personalInfo}
-                isFresher={isFresher}
-                jobTitle={jobTitle}
+                aboutMe={aboutMe} skills={skills} education={education}
+                experience={experience} projects={projects}
+                personalInfo={personalInfo} isFresher={isFresher} jobTitle={jobTitle}
               />
             }
             fileName={`${personalInfo?.name?.replace(/\s+/g, "_") || "resume"}.pdf`}
-            className="flex items-center justify-center w-full py-2.5 bg-gradient-to-r from-emerald-500 to-green-600 text-white rounded-lg text-sm font-medium hover:from-emerald-600 hover:to-green-700 transition-all shadow-sm"
+            className="flex items-center justify-center gap-2 w-full py-2.5
+            bg-indigo-600 hover:bg-indigo-500
+            text-white rounded-xl text-[13px] font-semibold
+            transition-all duration-200"
           >
-            {({ loading }) => loading ? 'Generating...' : 'Download PDF'}
+            {({ loading }) => loading
+              ? <><svg className="animate-spin w-3.5 h-3.5" viewBox="0 0 24 24" fill="none"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" /></svg> Generating...</>
+              : <>↓ Download PDF</>
+            }
           </PDFDownloadLink>
 
           {/* Back Button */}
           <button
             onClick={() => navigate("/")}
-            className="w-full py-2.5 bg-white text-gray-500 border border-gray-200 rounded-lg text-sm hover:bg-gray-50 transition-colors cursor-pointer"
+            className="w-full py-2.5 bg-transparent hover:bg-white/[0.04]
+            text-[#71717A] hover:text-[#A1A1AA]
+            border border-white/[0.08]
+            rounded-xl text-[13px] transition-all duration-200 cursor-pointer"
           >
             ← Back to Form
           </button>
 
           {/* ── TEMPLATE SELECTOR ── */}
-          <div className="bg-white rounded-xl p-4 border border-gray-100 shadow-sm">
-            <p className="text-[11px] text-gray-400 tracking-widest uppercase mb-3">
-              Choose Template
+          <div className="bg-[#0A0A0A] border border-white/[0.08] rounded-xl p-4 mt-1">
+            <p className="text-[10px] text-[#71717A] tracking-widest uppercase mb-3 font-medium">
+              Template
             </p>
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-1.5">
               {TEMPLATES.map((t) => {
                 const isActive = selectedTemplate === t.id;
                 return (
                   <button
                     key={t.id}
                     onClick={() => setSelectedTemplate(t.id)}
-                    className={`
-                      flex items-center gap-2.5 w-full px-3 py-2 rounded-lg text-sm font-medium
-                      transition-all duration-150 cursor-pointer border
-                      ${isActive
-                        ? "bg-gray-900 text-white border-gray-900 shadow-sm"
-                        : "bg-gray-50 text-gray-600 border-gray-200 hover:bg-gray-100 hover:border-gray-300"
-                      }
-                    `}
+                    className={`flex items-center gap-2.5 w-full px-3 py-2.5 rounded-lg text-[12px] font-medium
+                    transition-all duration-150 cursor-pointer border
+                    ${isActive
+                        ? "bg-indigo-600 text-white border-indigo-600"
+                        : "bg-transparent text-[#A1A1AA] border-white/[0.08] hover:bg-white/[0.05] hover:text-white"
+                      }`}
                   >
-                    <span className="text-base leading-none">{t.emoji}</span>
+                    <span className="text-sm leading-none">{t.emoji}</span>
                     <span>{t.label}</span>
                     {isActive && (
-                      <span className="ml-auto text-[10px] bg-white/20 text-white px-1.5 py-0.5 rounded font-semibold">
+                      <span className="ml-auto text-[10px] bg-white/20 px-1.5 py-0.5 rounded font-semibold">
                         Active
                       </span>
                     )}
@@ -224,10 +289,11 @@ export default function PreviewPage() {
       {/* Mobile backdrop */}
       {sidebarOpen && (
         <div
-          className="fixed inset-0 bg-black/30 z-10 lg:hidden"
+          className="fixed inset-0 bg-black/60 z-10 lg:hidden backdrop-blur-sm"
           onClick={() => setSidebarOpen(false)}
         />
       )}
+
     </div>
   );
 }
