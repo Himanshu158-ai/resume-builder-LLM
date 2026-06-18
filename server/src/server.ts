@@ -2,6 +2,10 @@ import express, { Request, Response } from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import ResumeRoute from "./routes/ResumeRoute";
+import { googleChat } from "./models/llm.models";
+import {mistralChat} from "./models/llm.models"
+import {cohereChat} from "./models/llm.models";
+import { config } from "./config/config";
 
 dotenv.config();
 
@@ -28,9 +32,10 @@ app.options("*", cors());
 
 app.use("/api/resume", ResumeRoute);
 
-// 👇 health route bhi add kar de
-app.get("/", (req: Request, res: Response) => {
-  res.send("Server is running ✅");
+// 👇 health route
+app.get("/", async(req: Request, res: Response) => {
+    const result = await googleChat.invoke("Hello, how are you?");
+    res.send(result?.text);
 });
 
 app.get("/health", (req: Request, res: Response) => {
