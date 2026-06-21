@@ -103,7 +103,7 @@ export default function FormPage() {
 
             {/* Step label */}
             <p className="text-[10px] uppercase tracking-[0.12em] text-indigo-400 font-semibold mb-3">
-              Step {current + 1} of {steps.length} — {steps[current].label}
+              Step {current + 1} of {steps.length} - {steps[current].label}
             </p>
             <h2 className="text-[20px] font-bold text-white tracking-tight leading-snug mb-1">
               {steps[current].title}

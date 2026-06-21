@@ -135,7 +135,7 @@ export default function HomePage() {
                         From idea to resume<br />in four steps
                     </h2>
                     <p className="text-[#71717A] text-sm leading-relaxed max-w-[480px] mb-12">
-                        No templates to fill. No guesswork. Just describe what you've built — the agents handle the rest.
+                        No templates to fill. No guesswork. Just describe what you've built the agents handle the rest.
                     </p>
 
                     {/* ── STATS ── */}
