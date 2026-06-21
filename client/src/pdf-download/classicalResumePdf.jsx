@@ -2,10 +2,10 @@ import { Document, Page, Text, View, Link, StyleSheet } from '@react-pdf/rendere
 
 const styles = StyleSheet.create({
   page: {
-    paddingTop: 35,
-    paddingBottom: 35,
-    paddingLeft: 45,
-    paddingRight: 45,
+    paddingTop: 30,
+    paddingBottom: 30,
+    paddingLeft: 35,
+    paddingRight: 35,
     fontFamily: 'Helvetica',
     fontSize: 10,
     color: '#111827',

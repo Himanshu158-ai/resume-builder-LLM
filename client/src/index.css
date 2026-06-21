@@ -3,6 +3,13 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+@font-face {
+  font-family: "Times New Roman", Times, serif;
+  src: url("./fonts/times-new-roman.ttf");
+  font-weight: normal;
+  font-style: normal;
+}
+
 /* PRINT SETTINGS */
 @media print {
   body {

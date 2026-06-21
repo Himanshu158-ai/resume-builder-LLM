@@ -7,13 +7,19 @@ import ModernMinimalist from "../templates/ModernMinimalist";
 import ExecutiveClean from "../templates/Executiveclean";
 import { PDFDownloadLink } from '@react-pdf/renderer';
 import ClassicalPDF from '../pdf-download/classicalResumePdf';
+import ExecutiveCleanPDF from '../pdf-download/executiveResumePdf';
 
 
+const PDF_TEMPLATE_MAP = {
+  classical: ClassicalPDF,
+  executive: ExecutiveCleanPDF,
+  // add more: "<template-id>": <PDFComponent>,
+};
 
 const TEMPLATES = [
   { id: "classical", label: "Classical", emoji: "📜" },
   // { id: "modern", label: "Modern", emoji: "🎨" },
-  // { id: "executive", label: "Executive Clean", emoji: "🖤" },
+  { id: "executive", label: "Executive Clean", emoji: "🖤" },
 ];
 
 function TemplateRenderer({ id, props }) {
@@ -24,6 +30,8 @@ function TemplateRenderer({ id, props }) {
     default: return <Classical        {...props} />;
   }
 }
+
+
 
 export default function PreviewPage() {
   const { state } = useLocation();
@@ -38,7 +46,7 @@ export default function PreviewPage() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [selectedTemplate, setSelectedTemplate] = useState("classical");
 
-
+  const SelectedPDF = PDF_TEMPLATE_MAP[selectedTemplate] || ClassicalPDF; // fallback if id not found
 
 
   if (!resume) {
@@ -112,7 +120,7 @@ export default function PreviewPage() {
         <div className="flex gap-2">
           <PDFDownloadLink
             document={
-              <ClassicalPDF
+              <SelectedPDF
                 aboutMe={aboutMe} skills={skills} education={education}
                 experience={experience} projects={projects}
                 personalInfo={personalInfo} isFresher={isFresher} jobTitle={jobTitle}
@@ -222,7 +230,7 @@ export default function PreviewPage() {
           {/* Download Button */}
           <PDFDownloadLink
             document={
-              <ClassicalPDF
+              <SelectedPDF
                 aboutMe={aboutMe} skills={skills} education={education}
                 experience={experience} projects={projects}
                 personalInfo={personalInfo} isFresher={isFresher} jobTitle={jobTitle}
