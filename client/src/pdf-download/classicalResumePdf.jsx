@@ -186,28 +186,39 @@ const ClassicalPDF = ({ aboutMe, skills, education, experience, projects, person
 
         {/* SUMMARY */}
         {aboutMe?.[0]?.about && (
-          <View style={{ marginBottom: 6 }}>
+          <View style={{ marginBottom: 2 }}>
             <SectionTitle>Summary</SectionTitle>
             <Text style={styles.summaryText}>{aboutMe[0].about}</Text>
           </View>
         )}
 
         {/* SKILLS */}
-        {skills?.length > 0 && (
-          <View style={{ marginBottom: 6 }}>
+        {skills && Object.keys(skills).length > 0 && (
+          <View style={{ marginBottom: 2 }}>
             <SectionTitle>Skills</SectionTitle>
-            <Text style={styles.skillsText}>{skills.join(' • ')}</Text>
+            {Object.entries(skills)
+              .filter(([, list]) => list.length > 0)
+              .map(([category, list]) => (
+                <View key={category} style={{ flexDirection: 'row', marginBottom: 2 }}>
+                  <Text style={[styles.skillsText, { fontWeight: 'bold', width: 170, flexShrink: 0 }]}>
+                    {category} :
+                  </Text>
+                  <Text style={[styles.skillsText, { flex: 1, paddingLeft: 8 }]}>
+                    {list.join(', ')}
+                  </Text>
+                </View>
+              ))}
           </View>
         )}
 
         {/* EXPERIENCE */}
         {!isFresher && experience?.length > 0 && (
-          <View style={{ marginBottom: 6 }}>
+          <View style={{ marginBottom: 2 }}>
             <SectionTitle>Experience</SectionTitle>
             {experience.map((exp, i) => (
               <View key={i} style={styles.itemWrapper}>
                 <View style={styles.itemHeader}>
-                  <Text style={styles.itemTitle}>{exp.role} — {exp.company}</Text>
+                  <Text style={styles.itemTitle}>{exp.role} - {exp.company}</Text>
                   <Text style={styles.itemSubtitle}>{exp.duration}</Text>
                 </View>
                 {exp.points?.map((point, j) => (
@@ -220,7 +231,7 @@ const ClassicalPDF = ({ aboutMe, skills, education, experience, projects, person
 
         {/* PROJECTS */}
         {projects?.length > 0 && (
-          <View style={{ marginBottom: 6 }}>
+          <View style={{ marginBottom: 2 }}>
             <SectionTitle>Projects</SectionTitle>
             {projects.map((proj, i) => (
               <View key={i} style={styles.itemWrapper}>
@@ -238,13 +249,13 @@ const ClassicalPDF = ({ aboutMe, skills, education, experience, projects, person
 
         {/* EDUCATION */}
         {education?.college && (
-          <View style={{ marginBottom: 6 }}>
+          <View style={{ marginBottom: 2 }}>
             <SectionTitle>Education</SectionTitle>
             <View style={styles.eduRow}>
               <View style={styles.eduLeft}>
                 <Text style={styles.itemTitle}>{education.college}</Text>
                 <Text style={styles.itemSubtitle}>
-                  {education.degree} — {education.branch}
+                  {education.degree} - {education.branch}
                 </Text>
               </View>
               <View style={styles.eduRight}>

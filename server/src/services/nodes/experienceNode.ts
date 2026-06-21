@@ -17,7 +17,10 @@ Role: ${exp.role}
 Company: ${exp.company}
 Duration: ${exp.duration}
 Description: ${exp.description}
-Skills: ${skills.join(", ")}
+Skills: ${Object.entries(skills)
+      .map(([cat, list]) => list.length ? `${cat}: ${list.join(", ")}` : null)
+      .filter(Boolean)
+      .join(" | ")}
 
 TASK:
 Write 3 bullet points for this work experience.

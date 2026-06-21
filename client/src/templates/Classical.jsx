@@ -29,11 +29,14 @@ const Classical = ({ aboutMe, skills, education, experience, projects, personalI
         });
     };
 
-    const handleSkillsChange = (value) => {
+    const handleSkillsChange = (category, value) => {
         if (!setEditedResume) return;
         setEditedResume(prev => ({
             ...prev,
-            skills: value.split('•').map(s => s.trim()).filter(Boolean)
+            skills: {
+                ...prev.skills,
+                [category]: value.split(',').map(s => s.trim()).filter(Boolean)
+            }
         }));
     };
 
@@ -65,7 +68,7 @@ const Classical = ({ aboutMe, skills, education, experience, projects, personalI
     });
 
     const SectionTitle = ({ children }) => (
-        <div className="text-[15px] font-bold tracking-widest uppercase text-gray-900 border-b-1 border-gray-600 pb-1 mb-3 font-sans">
+        <div className="text-[18px] font-bold tracking-widest uppercase text-gray-900 border-b-1 border-gray-600 pb-1 mb-1 font-sans">
             {children}
         </div>
     );
@@ -134,7 +137,7 @@ const Classical = ({ aboutMe, skills, education, experience, projects, personalI
 
             {/* SUMMARY */}
             {aboutMe && (
-                <div className="mb-4">
+                <div className="mb-2">
                     <SectionTitle>Summary</SectionTitle>
                     <p
                         {...editableProps(val => handleAboutMeChange(val), "text-[13px] text-gray-800 leading-relaxed")}
@@ -145,23 +148,35 @@ const Classical = ({ aboutMe, skills, education, experience, projects, personalI
             )}
 
             {/* SKILLS */}
-            {skills?.length > 0 && (
-                <div className="mb-4">
+            {skills && Object.keys(skills).length > 0 && (
+                <div className="mb-2">
                     <SectionTitle>Skills</SectionTitle>
-                    <p
-                        {...editableProps(val => handleSkillsChange(val), "text-[13px]")}
-                    >
-                        {skills.join(" • ")}
-                    </p>
+                    <div className="space-y-0.1">
+                        {Object.entries(skills)
+                            .filter(([, list]) => list.length > 0)
+                            .map(([category, list]) => (
+                                <div
+                                    key={category}
+                                    className="flex text-[13px] gap-10"
+                                >
+                                    <span className="font-bold w-[170px] shrink-0">{category} :</span>
+                                    <p
+                                        {...editableProps(val => handleSkillsChange(category, val), "")}
+                                    >
+                                        {list.join(", ")}
+                                    </p>
+                                </div>
+                            ))}
+                    </div>
                 </div>
             )}
 
             {/* EXPERIENCE */}
             {!isFresher && experience?.length > 0 && (
-                <div className="mb-4">
+                <div className="mb-2">
                     <SectionTitle>Experience</SectionTitle>
                     {experience.map((exp, i) => (
-                        <div key={i} className="mb-3">
+                        <div key={i} className="mb-2">
                             <div className="flex justify-between">
                                 <p className="font-semibold text-[13px] text-gray-800">
                                     <span {...editableProps(val => handleArrayItemChange('experience', i, 'role', val))}>{exp.role}</span> — <span {...editableProps(val => handleArrayItemChange('experience', i, 'company', val))}>{exp.company}</span>
@@ -187,10 +202,10 @@ const Classical = ({ aboutMe, skills, education, experience, projects, personalI
 
             {/* PROJECTS */}
             {projects?.length > 0 && (
-                <div className="mb-4">
+                <div className="mb-2">
                     <SectionTitle>Projects</SectionTitle>
                     {projects.map((p, i) => (
-                        <div key={i} className="mb-5">
+                        <div key={i} className="mb-2">
                             <div className="flex justify-between">
                                 <p {...editableProps(val => handleArrayItemChange('projects', i, 'name', val), "font-semibold text-[13px] text-gray-800")}>
                                     {p.name}
@@ -199,7 +214,7 @@ const Classical = ({ aboutMe, skills, education, experience, projects, personalI
                                     {p.techStack}
                                 </p>
                             </div>
-                            <ul className="mt-1 text-[13px] flex flex-col pl-1">
+                            <ul className="mt-0.7 text-[13px] flex flex-col pl-1">
                                 {p.points?.map((pt, j) => (
                                     <li key={j} className="flex items-start gap-1.5">
                                         <span className="text-gray-900">•</span>
@@ -216,7 +231,7 @@ const Classical = ({ aboutMe, skills, education, experience, projects, personalI
 
             {/* EDUCATION */}
             {education?.college && (
-                <div className="mb-4">
+                <div className="mb-2">
                     <SectionTitle>Education</SectionTitle>
                     <div className="flex justify-between">
                         <div>
@@ -224,7 +239,7 @@ const Classical = ({ aboutMe, skills, education, experience, projects, personalI
                                 {education.college}
                             </p>
                             <p className="text-[12px] text-gray-600">
-                                <span {...editableProps(val => handleFieldChange('education', 'degree', val))}>{education.degree}</span> — <span {...editableProps(val => handleFieldChange('education', 'branch', val))}>{education.branch}</span>
+                                <span {...editableProps(val => handleFieldChange('education', 'degree', val))}>{education.degree}</span> - <span {...editableProps(val => handleFieldChange('education', 'branch', val))}>{education.branch}</span>
                             </p>
                         </div>
                         <div className="text-right text-[12px] text-gray-600">
