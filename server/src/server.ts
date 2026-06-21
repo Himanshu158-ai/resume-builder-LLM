@@ -38,8 +38,10 @@ app.get("/", async(req: Request, res: Response) => {
     res.send(result?.text);
 });
 
-app.get("/health", (req: Request, res: Response) => {
-  res.send("OK");
+app.post("/api/check", (req: Request, res: Response) => {
+  const data = req.body;
+  console.log(data);
+  res.json({message: "OK"});
 });
 
 const PORT = process.env.PORT || 5000;

@@ -24,7 +24,10 @@ PROJECT:
 Name: ${project.name}
 Tech Stack: ${project.techStack}
 Description: ${project.description}
-Skills: ${skills.join(", ")}
+Skills: ${Object.entries(skills)
+      .map(([cat, list]) => list.length ? `${cat}: ${list.join(", ")}` : null)
+      .filter(Boolean)
+      .join(" | ")}
 
 TASK:
 Write 3-4 bullet points for this project.

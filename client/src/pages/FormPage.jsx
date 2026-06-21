@@ -15,7 +15,13 @@ const defaultData = {
   personalInfo: { name: "", email: "", phone: "", location: "", linkedin: "", github: "" },
   aboutMe: [{ about: "", target: "" }],
   education: { college: "", degree: "", branch: "", year: "", cgpa: "" },
-  skills: [],
+  skills: {
+    "Frontend": [],
+    "Backend": [],
+    "Databases": [],
+    "Programming Languages": [],
+    "Tools & Platforms": [],
+  },
   projects: [{ name: "", techStack: "", description: "" }],
   experience: [{ company: "", role: "", duration: "", description: "" }],
   isFresher: false,
@@ -44,6 +50,7 @@ export default function FormPage() {
       const res = await axios.post(API_URL + "/api/resume/generate", data, {
         withCredentials: true,
       });
+      // const res = await axios.post(API_URL + "/api/check", data);
       toast.success(res.data.message || "Resume generated successfully!");
       console.log(res.data);
       navigate("/preview", { state: { resume: res.data } });

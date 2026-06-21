@@ -22,7 +22,10 @@ PROJECTS:
 ${JSON.stringify(projects)}
 
 SKILLS:
-${skills.join(", ")}
+${Object.entries(skills)
+      .map(([cat, list]) => list.length ? `${cat}: ${list.join(", ")}` : null)
+      .filter(Boolean)
+      .join(" | ")}
 
 JOB TITLE:
 ${jobTitle}

@@ -12,7 +12,10 @@ CANDIDATE PROFILE:
 Name: ${personalInfo.name}
 About: ${aboutMe.map(a => a.about).join(", ")}
 Target Role: ${aboutMe.map(a => a.target).join(", ")}
-Skills: ${skills.join(", ")}
+Skills: ${Object.entries(skills)
+      .map(([cat, list]) => list.length ? `${cat}: ${list.join(", ")}` : null)
+      .filter(Boolean)
+      .join(" | ")}
 Projects: ${projects.map(p => p.name).join(", ")}
 ${!isFresher
       ? `Experience: ${experience.map(e => `${e.role} at ${e.company}`).join(", ")}`
