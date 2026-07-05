@@ -44,23 +44,34 @@ Example: ["Built reusable React components for dashboard UI", "Developed REST AP
         ? res.content
         : res.content.map(c => ("text" in c ? c.text : "")).join("");
 
-    // ✅ JSON parse with fallback
+    // strip markdown code fences if present
+    const cleaned = content
+      .trim()
+      .replace(/^```json\s*/i, "")
+      .replace(/^```\s*/i, "")
+      .replace(/```$/i, "")
+      .trim();
+
     let points: string[] = [];
     try {
-      points = JSON.parse(content.trim());
+      const parsed = JSON.parse(cleaned);
+      points = Array.isArray(parsed) ? parsed.map(p => String(p).trim()) : [];
     } catch {
-      points = content
-        .trim()
+      points = cleaned
         .split("\n")
-        .filter((line) => line.trim() !== "");
+        .map(line => line.replace(/^[-*•\d.]+\s*/, "").replace(/^["']|["'],?$/g, "").trim())
+        .filter(line => line.length > 0);
+    }
+
+    if (points.length === 0) {
+      points = ["Content generation failed — please regenerate this section."];
     }
 
     enhancedExperience.push({
       ...exp,
-      points: points, // ✅ description → points array
+      points,
     });
   }
-
   return {
     experience: enhancedExperience,
   };
