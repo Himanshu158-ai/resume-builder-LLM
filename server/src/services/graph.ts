@@ -6,28 +6,23 @@ import { GenProjectsNode } from "./nodes/projectNode";
 import { FinalNode } from "./nodes/finalNode";
 
 const graph = new StateGraph(state)
+  //changed---->
   .addNode("GenAboutNode", GenAboutNode)
   .addNode("GenExperienceNode", GenExperienceNode)
   .addNode("GenProjectsNode", GenProjectsNode)
   .addNode("FinalNode", FinalNode)
 
-  .addEdge(START, "GenAboutNode")
-  .addEdge(START,"GenProjectsNode")
-
-  // conditional routing
   .addConditionalEdges(START, (state) => {
-    if(!state.isFresher){
-      return "GenExperienceNode"
-    }else {
-      return "FinalNode";
-    }
+    return state.isFresher
+      ? ["GenAboutNode", "GenProjectsNode"]
+      : ["GenAboutNode", "GenProjectsNode", "GenExperienceNode"];
   })
 
-
-  .addEdge("GenAboutNode","FinalNode")
+  .addEdge("GenAboutNode", "FinalNode")
   .addEdge("GenProjectsNode", "FinalNode")
-  .addEdge("FinalNode", END)
+  .addEdge("GenExperienceNode", "FinalNode")
 
+  .addEdge("FinalNode", END)
 
   .compile();
 
@@ -46,7 +41,7 @@ export default async function runResumeAgent(userData: any) {
     console.log("Final Graph");
 
     return {
-      aboutMe: result.aboutMe || userData.aboutMe || [{about:"",target:""}],
+      aboutMe: result.aboutMe || userData.aboutMe || [{ about: "", target: "" }],
       experience: result.experience || userData.experience || [],
       projects: result.projects || userData.projects || [],
       finalReview: result.finalReview || "0",
