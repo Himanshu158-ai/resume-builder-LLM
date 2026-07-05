@@ -16,32 +16,25 @@ EXPERIENCE:
 Role: ${exp.role}
 Company: ${exp.company}
 Duration: ${exp.duration}
-Description: ${exp.description}
-Skills: ${Object.entries(skills)
-      .map(([cat, list]) => list.length ? `${cat}: ${list.join(", ")}` : null)
-      .filter(Boolean)
-      .join(" | ")}
+Description (as provided by user): ${exp.description || "Not provided"}
 
 TASK:
-Write 3 bullet points for this work experience.
+Write exactly 3 bullet points for this work experience, based STRICTLY on the Description above.
 
-RULES:
-- Start each bullet with a strong action verb (Built, Developed, Implemented, Designed, Contributed, Worked)
+HARD RULES:
+- Do NOT invent responsibilities, tasks, technologies, or achievements not mentioned in the Description.
+- Do NOT invent or estimate any numbers, percentages, or metrics — use them ONLY if explicitly present in Description.
+- If Description is short or vague, keep bullets short and general — do NOT pad with invented detail.
+- If Description is "Not provided", generate bullets ONLY from Role + Company context, staying generic and safe.
+
+WRITING RULES:
+- Start each bullet with a strong action verb (Built, Developed, Implemented, Designed, Contributed, Collaborated)
 - Maximum 12-14 words per bullet
-- Naturally include relevant skills from the skills list
-- If user has mentioned any numbers/metrics in description → use them
-- If user has NOT mentioned any numbers → do NOT add any, just describe the work clearly
-- No soft skills, no fluff, no fake metrics
+- No soft skills, no fluff, no buzzwords
 
-STRICT RULE:
-Never invent or estimate numbers, percentages, or metrics.
-Only use what user has explicitly provided in description.
-ATS optimization = right keywords, not fake numbers.
-
-OUTPUT:
-Return ONLY a valid JSON array of 3 strings.
-Example: ["Built reusable React components...", "Developed REST APIs..."]
-No markdown, no explanation, nothing else.
+OUTPUT FORMAT:
+Return ONLY a raw JSON array of exactly 3 strings. No markdown, no code fences, no explanation.
+Example: ["Built reusable React components for dashboard UI", "Developed REST APIs for user authentication"]
 `;
 
     const res = await cohereChat.invoke(prompt);
