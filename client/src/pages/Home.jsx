@@ -1,6 +1,94 @@
 import { useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
+import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { Download, Globe, User, Cpu, Eye, Sparkles, BarChart2, FileDown, CheckCircle, Zap } from "lucide-react";
+
+function useCountUp(target, duration = 1500) {
+    const [value, setValue] = useState(0);
+    const ref = useRef(null);
+    const started = useRef(false);
+
+    useEffect(() => {
+        const num = parseFloat(String(target).replace(/[^0-9.]/g, "")) || 0;
+        const observer = new IntersectionObserver(([entry]) => {
+            if (entry.isIntersecting && !started.current) {
+                started.current = true;
+                const start = performance.now();
+                const step = (now) => {
+                    const progress = Math.min((now - start) / duration, 1);
+                    const eased = 1 - Math.pow(1 - progress, 3);
+                    setValue(num * eased);
+                    if (progress < 1) requestAnimationFrame(step);
+                };
+                requestAnimationFrame(step);
+            }
+        }, { threshold: 0.4 });
+        if (ref.current) observer.observe(ref.current);
+        return () => observer.disconnect();
+    }, [target, duration]);
+
+    return [ref, value];
+}
+
+function StatCard({ num, label }) {
+    const prefix = num.match(/^[^0-9]*/)?.[0] || "";
+    const suffix = num.match(/[^0-9]*$/)?.[0] || "";
+    const [ref, value] = useCountUp(num);
+    const display = num.includes(".") ? value.toFixed(0) : Math.round(value);
+
+    return (
+        <div ref={ref}>
+            <p className="text-[28px] font-bold tracking-tight leading-none text-indigo-400">
+                {prefix.replace(/[0-9]/g, "")}{display}{suffix.replace(/[0-9]/g, "")}
+            </p>
+            <p className="text-[11px] text-[#71717A] mt-1">{label}</p>
+        </div>
+    );
+}
+
+function MagneticButton({ children, onClick, className }) {
+    const ref = useRef(null);
+    const x = useMotionValue(0);
+    const y = useMotionValue(0);
+    const sx = useSpring(x, { stiffness: 200, damping: 15 });
+    const sy = useSpring(y, { stiffness: 200, damping: 15 });
+
+    const handleMove = (e) => {
+        const rect = ref.current.getBoundingClientRect();
+        x.set((e.clientX - rect.left - rect.width / 2) * 0.25);
+        y.set((e.clientY - rect.top - rect.height / 2) * 0.25);
+    };
+    const reset = () => { x.set(0); y.set(0); };
+
+    return (
+        <motion.button
+            ref={ref}
+            onMouseMove={handleMove}
+            onMouseLeave={reset}
+            style={{ x: sx, y: sy }}
+            onClick={onClick}
+            className={className}
+        >
+            {children}
+        </motion.button>
+    );
+}
+
+function FloatingChip({ label, className, delay = 0 }) {
+    return (
+        <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: [0, -8, 0] }}
+            transition={{
+                opacity: { duration: 0.6, delay },
+                y: { duration: 4 + delay, repeat: Infinity, ease: "easeInOut", delay },
+            }}
+            className={`absolute hidden md:flex items-center gap-1.5 bg-[#18181B]/90 backdrop-blur-sm border border-white/[0.08] rounded-lg px-2.5 py-1.5 text-[10px] font-medium text-[#A1A1AA] shadow-lg shadow-black/40 ${className}`}
+        >
+            {label}
+        </motion.div>
+    );
+}
 
 export default function HomePage() {
     const navigate = useNavigate();
@@ -24,20 +112,47 @@ export default function HomePage() {
         return () => clearInterval(color);
     }, [])
 
-    return (
-        <div className="min-h-screen overflow-x-hidden bg-[#0A0A0A] relative">
+    // mouse-follow spotlight for hero card
+    const mvX = useMotionValue(0);
+    const mvY = useMotionValue(0);
+    const rotateX = useTransform(mvY, [-100, 100], [8, -8]);
+    const rotateY = useTransform(mvX, [-100, 100], [-8, 8]);
+    const handleCardMove = (e) => {
+        const rect = e.currentTarget.getBoundingClientRect();
+        mvX.set(e.clientX - rect.left - rect.width / 2);
+        mvY.set(e.clientY - rect.top - rect.height / 2);
+    };
+    const resetCard = () => { mvX.set(0); mvY.set(0); };
 
-            {/* Subtle accent glow — much more restrained than before */}
+    return (
+        <div className="min-h-screen overflow-x-hidden bg-[#09090B] relative">
+
+            {/* Background: grid + noise + radial glow */}
+            <div
+                className="absolute inset-0 opacity-[0.03] pointer-events-none"
+                style={{
+                    backgroundImage: "linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)",
+                    backgroundSize: "48px 48px",
+                }}
+            />
+            <div className="absolute top-[-10%] left-1/2 -translate-x-1/2 w-[900px] h-[500px] bg-indigo-500/[0.12] rounded-full blur-[140px] pointer-events-none" />
+            <div className="absolute top-[10%] right-[-5%] w-[400px] h-[400px] bg-cyan-400/[0.06] rounded-full blur-[120px] pointer-events-none" />
+
+            {/* Subtle accent line */}
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[1px] bg-gradient-to-r from-transparent via-indigo-500/30 to-transparent" />
 
             <div className="max-w-7xl mx-auto px-6 md:px-10 py-14 md:py-10 grid md:grid-cols-2 gap-12 md:gap-16 items-center relative z-10">
 
                 {/* LEFT */}
-                <div className="text-center md:text-left">
-
+                <motion.div
+                    initial={{ opacity: 0, y: 16 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6, ease: "easeOut" }}
+                    className="text-center md:text-left"
+                >
                     {/* Badge */}
                     <div className="inline-flex items-center gap-2 bg-indigo-500/[0.08] border border-indigo-500/20 px-3 py-1.5 rounded-full mb-6">
-                        <span className={`w-1.5 h-1.5 rounded-full ${colorIndex ? "bg-indigo-400" : "bg-emerald-400"}`} />
+                        <span className={`w-1.5 h-1.5 rounded-full transition-colors duration-500 ${colorIndex ? "bg-indigo-400" : "bg-emerald-400"}`} />
                         <span className="text-[11px] font-medium text-indigo-300 tracking-widest uppercase">
                             Multi-agent AI pipeline
                         </span>
@@ -59,23 +174,40 @@ export default function HomePage() {
                     </p>
 
                     {/* CTA */}
-                    <button
+                    <MagneticButton
                         onClick={() => navigate("/builder")}
-                        className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white px-6 py-3 rounded-[10px] text-sm font-semibold transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0"
+                        className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white px-6 py-3 rounded-[10px] text-sm font-semibold transition-colors duration-200 shadow-lg shadow-indigo-600/20"
                     >
                         Build your resume
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                             <path d="M5 12h14M12 5l7 7-7 7" />
                         </svg>
-                    </button>
-                </div>
+                    </MagneticButton>
+                </motion.div>
 
                 {/* RIGHT — Resume mock card */}
-                <div className="relative flex justify-center items-center mt-4 md:mt-0">
-                    <div className="relative p-5">
+                <motion.div
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.6, ease: "easeOut", delay: 0.15 }}
+                    className="relative flex justify-center items-center mt-4 md:mt-0"
+                >
+                    <div
+                        className="relative p-5"
+                        style={{ perspective: 800 }}
+                        onMouseMove={handleCardMove}
+                        onMouseLeave={resetCard}
+                    >
+                        {/* floating chips */}
+                        <FloatingChip label="⚛️ React" className="-top-8 left-0" delay={0} />
+                        <FloatingChip label="🧠 LangGraph" className="top-1/3 -left-16" delay={0.6} />
+                        <FloatingChip label="Interview Ready" className="-bottom-10 right-2" delay={1.1} />
 
                         {/* Card */}
-                        <div className="bg-[#111111] border border-white/[0.08] rounded-2xl p-6 w-full max-w-[320px] rotate-2 hover:rotate-0 transition-transform duration-500">
+                        <motion.div
+                            style={{ rotateX, rotateY, transformStyle: "preserve-3d" }}
+                            className="bg-[#111113] border border-white/[0.08] rounded-2xl p-6 w-full max-w-[320px] shadow-2xl shadow-black/50"
+                        >
                             <div className="border-b border-white/[0.06] pb-4 mb-5">
                                 <p className="text-white font-semibold text-[17px] tracking-tight mb-0.5">Himanshu</p>
                                 <p className="text-indigo-400 text-[11px] font-medium tracking-wide uppercase">MERN Stack Developer</p>
@@ -103,40 +235,53 @@ export default function HomePage() {
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </motion.div>
 
                         {/* Float badge — bottom left */}
-                        <div className="absolute -bottom-3 -left-3 bg-[#18181B] border border-white/[0.10] rounded-xl px-3 py-2 flex items-center gap-2">
+                        <div className="absolute -bottom-3 -left-3 bg-[#18181B] border border-white/[0.10] rounded-xl px-3 py-2 flex items-center gap-2 shadow-lg shadow-black/30">
                             <span className="text-indigo-400 text-sm">⚡</span>
                             <span className="text-[11px] text-[#A1A1AA] font-medium whitespace-nowrap">4 AI agents running</span>
                         </div>
 
                         {/* Float badge — top right */}
-                        <div className="absolute -top-3 -right-3 bg-[#18181B] border border-white/[0.10] rounded-xl px-3 py-2 flex items-center gap-2">
+                        <div className="absolute -top-3 -right-3 bg-[#18181B] border border-white/[0.10] rounded-xl px-3 py-2 flex items-center gap-2 shadow-lg shadow-black/30">
                             <div className="w-16 h-1 bg-white/[0.08] rounded overflow-hidden">
-                                <div className="h-full w-[90%] bg-emerald-500 rounded" />
+                                <motion.div
+                                    initial={{ width: 0 }}
+                                    animate={{ width: "90%" }}
+                                    transition={{ duration: 1.2, delay: 0.5, ease: "easeOut" }}
+                                    className="h-full bg-emerald-500 rounded"
+                                />
                             </div>
                             <span className="text-[11px] text-emerald-400 font-semibold">ATS 90</span>
                         </div>
 
                     </div>
-                </div>
+                </motion.div>
 
             </div>
+
             {/* ───── HOW IT WORKS + FEATURES SECTION ───── */}
-            <div className="bg-[#0A0A0A]">
+            <div className="bg-[#09090B] relative">
                 <div className="max-w-7xl mx-auto px-6 md:px-10 py-20 md:py-16">
 
                     {/* ── SECTION HEADER ── */}
-                    <div className="inline-flex items-center gap-2 bg-indigo-500/[0.08] border border-indigo-500/20 px-3 py-1.5 rounded-full mb-4">
-                        <span className="text-[11px] font-medium text-indigo-300 tracking-widest uppercase">How it works</span>
-                    </div>
-                    <h2 className="text-3xl md:text-[36px] font-bold text-white tracking-tight leading-[1.2] mb-3">
-                        From idea to resume<br />in four steps
-                    </h2>
-                    <p className="text-[#71717A] text-sm leading-relaxed max-w-[480px] mb-12">
-                        No templates to fill. No guesswork. Just describe what you've built the agents handle the rest.
-                    </p>
+                    <motion.div
+                        initial={{ opacity: 0, y: 12 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true, amount: 0.3 }}
+                        transition={{ duration: 0.5 }}
+                    >
+                        <div className="inline-flex items-center gap-2 bg-indigo-500/[0.08] border border-indigo-500/20 px-3 py-1.5 rounded-full mb-4">
+                            <span className="text-[11px] font-medium text-indigo-300 tracking-widest uppercase">How it works</span>
+                        </div>
+                        <h2 className="text-3xl md:text-[36px] font-bold text-white tracking-tight leading-[1.2] mb-3">
+                            From idea to resume<br />in four steps
+                        </h2>
+                        <p className="text-[#71717A] text-sm leading-relaxed max-w-[480px] mb-12">
+                            No templates to fill. No guesswork. Just describe what you've built the agents handle the rest.
+                        </p>
+                    </motion.div>
 
                     {/* ── STATS ── */}
                     <div className="flex gap-8 mb-14 flex-wrap">
@@ -146,10 +291,7 @@ export default function HomePage() {
                             { num: "25+", label: "Resumes generated" },
                             { num: "+80%", label: "Average ATS score" },
                         ].map(({ num, label }) => (
-                            <div key={label}>
-                                <p className="text-[28px] font-bold tracking-tight leading-none text-indigo-400">{num}</p>
-                                <p className="text-[11px] text-[#71717A] mt-1">{label}</p>
-                            </div>
+                            <StatCard key={label} num={num} label={label} />
                         ))}
                     </div>
 
@@ -160,15 +302,23 @@ export default function HomePage() {
                             { num: "02", icon: <Cpu size={15} />, title: "Agents go to work", desc: "Four specialized AI agents run in parallel Summary, Projects, Experience, and ATS Evaluator." },
                             { num: "03", icon: <Eye size={15} />, title: "Review & refine", desc: "Preview your resume live. See your ATS score and suggestions before downloading." },
                             { num: "04", icon: <Download size={15} />, title: "Download as PDF", desc: "One click. Clean, ATS-parseable PDF ready to send to recruiters or upload to portals." },
-                        ].map(({ num, icon, title, desc }) => (
-                            <div key={num} className="bg-[#0F0F0F] hover:bg-[#111111] transition-colors duration-200 p-6">
+                        ].map(({ num, icon, title, desc }, i) => (
+                            <motion.div
+                                key={num}
+                                initial={{ opacity: 0, y: 16 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true, amount: 0.3 }}
+                                transition={{ duration: 0.4, delay: i * 0.08 }}
+                                whileHover={{ y: -3 }}
+                                className="bg-[#0F0F0F] hover:bg-[#111113] transition-colors duration-200 p-6 hover:shadow-[inset_0_0_0_1px_rgba(99,102,241,0.25)]"
+                            >
                                 <p className="text-[11px] text-indigo-400 font-semibold tracking-widest mb-3">{num}</p>
                                 <div className="w-8 h-8 bg-indigo-500/[0.08] border border-indigo-500/[0.15] rounded-[8px] flex items-center justify-center text-indigo-400 mb-3">
                                     {icon}
                                 </div>
                                 <p className="text-[13px] font-semibold text-white tracking-tight mb-1.5">{title}</p>
                                 <p className="text-[11px] text-[#71717A] leading-relaxed">{desc}</p>
-                            </div>
+                            </motion.div>
                         ))}
                     </div>
 
@@ -192,38 +342,53 @@ export default function HomePage() {
                             { color: "indigo", icon: <Eye size={14} />, tag: "Editable", title: "Edit before you export", desc: "Generated content is fully editable. Tweak any section summary, experience, or projects before downloading your PDF." },
                             { color: "green", icon: <CheckCircle size={14} />, tag: "Grounded output", title: "No fluff, no hallucinations", desc: "Everything written is grounded in what you provide. The AI enhances language it never fabricates credentials." },
                             { color: "amber", icon: <Zap size={14} />, tag: "Dev-focused", title: "Built for freshers & devs", desc: "Understands tech stacks and projects. Frames limited experience powerfully for the job market." },
-                        ].map(({ color, icon, tag, title, desc }) => {
+                        ].map(({ color, icon, tag, title, desc }, i) => {
                             const colors = {
-                                indigo: { bg: "bg-indigo-500/[0.08]", border: "border-indigo-500/[0.15]", text: "text-indigo-400", tagBg: "bg-indigo-500/[0.08] border-indigo-500/[0.15] text-indigo-300" },
-                                green: { bg: "bg-emerald-500/[0.06]", border: "border-emerald-500/[0.12]", text: "text-emerald-400", tagBg: "bg-emerald-500/[0.06] border-emerald-500/[0.12] text-emerald-300" },
-                                amber: { bg: "bg-amber-400/[0.06]", border: "border-amber-400/[0.12]", text: "text-amber-400", tagBg: "bg-amber-400/[0.06] border-amber-400/[0.12] text-amber-300" },
+                                indigo: { bg: "bg-indigo-500/[0.08]", border: "border-indigo-500/[0.15]", text: "text-indigo-400", tag: "text-indigo-300" },
+                                green: { bg: "bg-emerald-500/[0.06]", border: "border-emerald-500/[0.12]", text: "text-emerald-400", tag: "text-emerald-300" },
+                                amber: { bg: "bg-amber-400/[0.06]", border: "border-amber-400/[0.12]", text: "text-amber-400", tag: "text-amber-300" },
                             }[color];
                             return (
-                                <div key={title} className="bg-[#0F0F0F] hover:bg-[#111111] transition-colors duration-200 p-6">
+                                <motion.div
+                                    key={title}
+                                    initial={{ opacity: 0, y: 16 }}
+                                    whileInView={{ opacity: 1, y: 0 }}
+                                    viewport={{ once: true, amount: 0.3 }}
+                                    transition={{ duration: 0.4, delay: i * 0.06 }}
+                                    whileHover={{ y: -3 }}
+                                    className="bg-[#0F0F0F] hover:bg-[#111113] transition-colors duration-200 p-6 hover:shadow-[inset_0_0_0_1px_rgba(99,102,241,0.2)]"
+                                >
                                     <div className={`w-8 h-8 ${colors.bg} border ${colors.border} rounded-[8px] flex items-center justify-center ${colors.text} mb-3`}>
                                         {icon}
                                     </div>
                                     <p className="text-[13px] font-semibold text-white tracking-tight mb-1.5">{title}</p>
                                     <p className="text-[11px] text-[#71717A] leading-relaxed mb-3">{desc}</p>
-                                    <span className={`text-[10px] font-light text-${colors.tagBg}`}>{tag}</span>
-                                </div>
+                                    <span className={`text-[10px] font-light ${colors.tag}`}>{tag}</span>
+                                </motion.div>
                             );
                         })}
                     </div>
 
                     {/* ── BOTTOM CTA ── */}
-                    <div className="mt-12 bg-[#111111] border border-white/[0.07] rounded-2xl px-8 py-7 flex items-center justify-between gap-6 flex-wrap">
-                        <div>
+                    <motion.div
+                        initial={{ opacity: 0, y: 16 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true, amount: 0.4 }}
+                        transition={{ duration: 0.5 }}
+                        className="mt-12 bg-[#111113] border border-white/[0.07] rounded-2xl px-8 py-7 flex items-center justify-between gap-6 flex-wrap relative overflow-hidden"
+                    >
+                        <div className="absolute -right-10 -top-10 w-40 h-40 bg-indigo-500/[0.08] rounded-full blur-3xl" />
+                        <div className="relative z-10">
                             <p className="text-[15px] font-semibold text-white tracking-tight mb-1">Ready to build yours?</p>
                             <p className="text-[12px] text-[#71717A]">Takes less than 2 minutes. No account needed to start.</p>
                         </div>
-                        <button
+                        <MagneticButton
                             onClick={() => navigate("/builder")}
-                            className="bg-indigo-600 hover:bg-indigo-500 text-white text-[13px] font-semibold px-5 py-2.5 rounded-[8px] transition-colors duration-200 whitespace-nowrap"
+                            className="relative z-10 bg-indigo-600 hover:bg-indigo-500 text-white text-[13px] font-semibold px-5 py-2.5 rounded-[8px] transition-colors duration-200 whitespace-nowrap"
                         >
                             Start building →
-                        </button>
-                    </div>
+                        </MagneticButton>
+                    </motion.div>
 
                 </div>
             </div>
