@@ -2,6 +2,10 @@ import React from 'react'
 import { motion } from 'framer-motion'
 import GradientWaves from '../components/GradientWaves';
 import { useNavigate } from 'react-router-dom';
+import ParticleText from '../components/ParticleText';
+import useResponsiveValue from '../hooks/responsiveHook';
+
+
 import {
     Sparkles,
     ScanEye,
@@ -49,6 +53,9 @@ const badgeVariants = {
 
 const Home = () => {
     const navigate = useNavigate();
+    const density = useResponsiveValue(2, 4) // mobile: 2, desktop: 4
+    const particleSize = useResponsiveValue(1.5, 2.2)
+    const scatter = useResponsiveValue(100, 190)
 
     return (
         <div className="relative w-full min-h-screen bg-black text-white font-sans overflow-x-hidden selection:bg-[#FF9FFC]/30 selection:text-white">
@@ -133,7 +140,7 @@ const Home = () => {
 
                 {/* 2. Hero Section */}
                 <main className="flex-grow">
-                    <section className="relative pt-20 sm:pt-28 pb-16 px-4 sm:px-6 md:px-8 max-w-5xl mx-auto flex flex-col items-center text-center">
+                    <section className="relative pt-5 sm:pt-28 pb-16 px-4 sm:px-6 md:px-8 max-w-5xl mx-auto flex flex-col items-center text-center">
                         <motion.div
                             variants={containerVariants}
                             initial="hidden"
@@ -155,13 +162,35 @@ const Home = () => {
                             </motion.div>
 
                             {/* Heading with Premium Typography */}
-                            <motion.h1
+
+                            {/* <motion.h1
                                 variants={itemVariants}
                                 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold leading-[1.05] sm:leading-[1.02] tracking-tight bg-clip-text text-transparent bg-gradient-to-b from-white via-white to-white/40 px-1 font-display"
                             >
                                 Resumes that get you <br />
                                 hired, not just noticed.
-                            </motion.h1>
+                            </motion.h1> */}
+
+                            <div style={{ width: '100%', height: 150, background: 'transparent' }}>
+                                <ParticleText
+                                    text="Four Minds, One Resume"
+                                    particleSize={particleSize}
+                                    density={density}
+                                    color="#f8fafc"
+                                    highlightColor="#7459adff"
+                                    scatter={scatter}
+                                    gatherDuration={1600}
+                                    stagger={420}
+                                    pointerRepel={42}
+                                    repelRadius={120}
+                                    idleDrift={0.8}
+                                    trigger="mount"
+                                    fontSize="clamp(3.5rem, 13vw, 9rem)"
+                                    fontWeight={600}
+                                    fontFamily="inherit"
+                                    glow
+                                />
+                            </div>
 
                             {/* Subtext */}
                             <motion.p
@@ -178,20 +207,12 @@ const Home = () => {
                             >
                                 <motion.button
                                     onClick={() => navigate("/builder")}
-                                    whileHover={{ scale: 1.03, boxShadow: '0 0 35px rgba(255,159,252,0.35)' }}
+                                    whileHover={{ scale: 1.03, boxShadow: '0 0 15px rgba(239, 203, 238, 0.35)' }}
                                     whileTap={{ scale: 0.97 }}
                                     className="w-full sm:w-auto px-8 py-4 rounded-full bg-white text-black font-semibold text-sm tracking-wide shadow-[0_0_20px_rgba(255,255,255,0.2)] transition-shadow duration-300 flex items-center justify-center gap-2 cursor-pointer"
                                 >
                                     Build My Resume <ArrowRight className="w-4 h-4 text-black animate-pulse" />
                                 </motion.button>
-                                <motion.a
-                                    href="#preview"
-                                    whileHover={{ scale: 1.03, backgroundColor: 'rgba(255,255,255,0.08)' }}
-                                    whileTap={{ scale: 0.97 }}
-                                    className="w-full sm:w-auto px-8 py-4 rounded-full border border-white/10 text-white/90 font-medium text-sm tracking-wide backdrop-blur-md transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer bg-white/[0.02]"
-                                >
-                                    Watch it Work
-                                </motion.a>
                             </motion.div>
 
                             {/* Trust badges */}
