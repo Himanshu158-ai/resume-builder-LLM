@@ -131,7 +131,7 @@ const Home = () => {
                         variants={itemVariants}
                         className="mt-6 sm:mt-8 text-white/40 text-[10px] sm:text-xs tracking-wider uppercase"
                     >
-                        Trusted by 10,000+ job seekers worldwide
+                        Free forever · No credit card needed
                     </motion.p>
 
                 </div>
